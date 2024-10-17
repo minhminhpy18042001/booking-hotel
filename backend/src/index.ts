@@ -24,7 +24,7 @@ app.use(cors({
 }));
 app.use("/api/auth", authRoutes);
 app.use("/api/users",userRoutes);
-app.use("api/my-hotels",myHotelRoutes);
+app.use("/api/my-hotels",myHotelRoutes);
 app.listen(7000,()=>{
     console.log("server is running on localhost:7000");
 });
