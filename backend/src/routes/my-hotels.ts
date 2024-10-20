@@ -62,6 +62,26 @@ router.get("/", verifyToken as any, async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching hotels" })
   }
 });
+router.put("/:hotelId",verifyToken as any,upload.array("imageFiles"),async (req: Request, res: Response): Promise<any> =>{
+  try {
+    const updateHotel:HotelType =req.body;
+    updateHotel.lastUpdated= new Date();
+    const hotel =await Hotel.findOneAndUpdate({
+      _id:req.params.hotelId,
+      userId: req.userId,
+    },updateHotel,{new:true});
+    if(!hotel){
+      return res.status(404).json({message:"Hotel not found"});
+    }
+    const files =req.files as Express.Multer.File[];
+    const updatedImageUrls= await uploadImages(files);
+    hotel.imageUrls=[...updatedImageUrls,...(updateHotel.imageUrls || []),];
+    await hotel.save();
+    res.status(201).json(hotel);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
 router.get("/:id", verifyToken as any, async (req: Request, res: Response) => {
   const id = req.params.id.toString();
   try {
