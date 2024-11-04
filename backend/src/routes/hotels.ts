@@ -49,6 +49,7 @@ router.post(
       const newBooking: BookingType = {
         ...req.body,
         userId: req.userId,
+        statusBooking:"booking",
       };
 
       const hotel = await Hotel.findOneAndUpdate(

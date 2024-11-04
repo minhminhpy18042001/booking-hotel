@@ -1,5 +1,6 @@
 import { useQuery } from "react-query";
 import * as apiClient from "../api-client";
+import CancelBookingForm from "../forms/CancelBookingForm/CancelBookingForm";
 
 const MyBookings =()=>{
     const {data:hotels}=useQuery("fetchMyBookings",apiClient.fetchMyBookings);
@@ -25,26 +26,7 @@ const MyBookings =()=>{
                             </div>
                         </div>
                         {hotel.bookings.map((booking) => (
-                            <div>
-                                <div>
-                                    <span className="font-bold mr-2">Dates: </span>
-                                    <span>
-                                        {new Date(booking.checkIn).toDateString()} -
-                                        {new Date(booking.checkOut).toDateString()}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span className="font-bold mr-2">Guests:</span>
-                                    <span>
-                                        {booking.adultCount} adults, {booking.childCount} children
-                                    </span>
-                                </div>
-                                <div>
-                                    <button className="w-[300px] bg-red-600 text-white h-full p-2 font-bold text-xl hover:bg-red-500">
-                                        Cancel
-                                    </button>
-                                </div>
-                            </div>
+                            <CancelBookingForm booking={booking}/>
                         ))}
                     </div>
                 </div>

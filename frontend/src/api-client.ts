@@ -2,6 +2,7 @@ import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
 import { HotelSearchResponse, HotelType, UserType } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
+import CancelBookingForm, {CancelBookingFormData} from "./forms/CancelBookingForm/CancelBookingForm"
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
@@ -183,6 +184,19 @@ export const createRoomBooking = async (formData: BookingFormData) => {
     throw new Error("Error booking room");
   }
 };
+export const cancelRoomBooking = async (formData: CancelBookingFormData) => {
+  const response =await fetch(
+    `${API_BASE_URL}/api/my-bookings/${formData.bookingId}`,{
+      method:"PUT",
+      credentials:"include",
+    });
+    if (!response.ok) {
+      throw new Error("Failed to cancel Booking");
+    }
+  
+    return response.json();
+};
+
 export const fetchMyBookings = async (): Promise<HotelType[]> => {
   const response = await fetch(`${API_BASE_URL}/api/my-bookings`, {
     credentials: "include",

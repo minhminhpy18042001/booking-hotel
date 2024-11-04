@@ -5,6 +5,7 @@ import { useSearchContext } from "../../contexts/SearchContext";
 import { useMutation } from "react-query";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
+import { useNavigate } from "react-router-dom";
 type Props={
     currentUser:UserType;
     totalCost:number;
@@ -25,11 +26,13 @@ const BookingForm =({ currentUser,totalCost}: Props)=>{
     const search = useSearchContext();
     const { hotelId } = useParams();
     const { showToast } = useAppContext();
+    const navigate =useNavigate();
     const { mutate: bookRoom, isLoading } = useMutation(
         apiClient.createRoomBooking,
         {
           onSuccess: () => {
             showToast({ message: "Booking Saved!", type: "SUCCESS" });
+            navigate(`/my-bookings`);
           },
           onError: () => {
             showToast({ message: "Error saving booking", type: "ERROR" });

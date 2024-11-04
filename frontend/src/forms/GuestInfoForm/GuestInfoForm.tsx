@@ -63,6 +63,7 @@ const GuestInfoForm =({hotelId,pricePerNight}:Props)=>{
                     <div>
                         <DatePicker
                             required
+                            disabled
                             selected={checkIn}
                             onChange={(date) => setValue("checkIn", date as Date)}
                             selectsStart
@@ -78,6 +79,7 @@ const GuestInfoForm =({hotelId,pricePerNight}:Props)=>{
                     <div>
                         <DatePicker
                             required
+                            disabled
                             selected={checkOut}
                             onChange={(date) => setValue("checkOut", date as Date)}
                             selectsStart
@@ -96,6 +98,7 @@ const GuestInfoForm =({hotelId,pricePerNight}:Props)=>{
                             <input
                                 className="w-full p-1 focus:outline-none font-bold"
                                 type="number"
+                                disabled
                                 min={1}
                                 max={20}
                                 {...register("adultCount", {
@@ -113,6 +116,7 @@ const GuestInfoForm =({hotelId,pricePerNight}:Props)=>{
                             <input
                                 className="w-full p-1 focus:outline-none font-bold"
                                 type="number"
+                                disabled
                                 min={0}
                                 max={20}
                                 {...register("childCount", {
