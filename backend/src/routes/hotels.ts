@@ -1,7 +1,8 @@
 import express, { Request, Response } from "express";
 import Hotel from "../models/hotel";
-import { HotelSearchResponse } from "../shared/types";
+import { BookingType, HotelSearchResponse } from "../shared/types";
 import { param, validationResult } from "express-validator";
+import verifyToken from "../middleware/auth";
 const router =express.Router();
 router.get("/search", async (req: Request, res: Response) => {
   try {
@@ -40,6 +41,36 @@ router.get("/search", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+router.post(
+  "/:hotelId/bookings",
+  verifyToken as any,
+  async (req: Request, res: Response):Promise<any> => {
+    try {  
+      const newBooking: BookingType = {
+        ...req.body,
+        userId: req.userId,
+      };
+
+      const hotel = await Hotel.findOneAndUpdate(
+        { _id: req.params.hotelId },
+        {
+          $push: { bookings: newBooking },
+        }
+      );
+
+      if (!hotel) {
+        return res.status(400).json({ message: "hotel not found" });
+      }
+
+      await hotel.save();
+      res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "something went wrong" });
+    }
+  }
+);
+
 router.get("/:id",[param("id").notEmpty().withMessage("Hotel ID is required")],
   async (req: Request, res: Response): Promise<any>  => {
     const errors = validationResult(req);

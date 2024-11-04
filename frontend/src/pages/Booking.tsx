@@ -31,7 +31,7 @@ const Booking =()=>{
             numberOfNights={numberOfNights}
             hotel={hotel}
             />
-            {currentUser && <BookingForm currentUser ={currentUser} />}
+            {currentUser && <BookingForm currentUser ={currentUser} totalCost ={hotel.pricePerNight*numberOfNights} />}
             
         </div>
     );
