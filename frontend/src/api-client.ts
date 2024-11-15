@@ -2,7 +2,8 @@ import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
 import { HotelSearchResponse, HotelType, UserType } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
-import CancelBookingForm, {CancelBookingFormData} from "./forms/CancelBookingForm/CancelBookingForm"
+import {CancelBookingFormData} from "./forms/CancelBookingForm/CancelBookingForm"
+import { RoomFormData } from "./forms/AddRoomForm/AddRoomForm";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
@@ -204,6 +205,19 @@ export const fetchMyBookings = async (): Promise<HotelType[]> => {
 
   if (!response.ok) {
     throw new Error("Unable to fetch bookings");
+  }
+
+  return response.json();
+};
+export const addRoom = async (RoomFormData: FormData) => {
+  const response = await fetch(`${API_BASE_URL}/api/my-hotels/${RoomFormData.get("hotelId")}/addRoom`, {
+    method: "PUT",
+    credentials: "include",
+    body: RoomFormData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to add Room");
   }
 
   return response.json();

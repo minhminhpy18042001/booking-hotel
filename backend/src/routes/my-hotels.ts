@@ -4,7 +4,7 @@ import cloudinary from "cloudinary";
 import Hotel from "../models/hotel";
 import verifyToken from "../middleware/auth";
 import { body } from "express-validator";
-import { HotelType } from "../shared/types";
+import { HotelType, Room } from "../shared/types";
 const router =express.Router();
 
 const storage =multer.memoryStorage();
@@ -83,6 +83,42 @@ router.put("/:hotelId",verifyToken as any,upload.array("imageFiles"),async (req:
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+router.put(
+  "/:hotelId/addRoom",
+  verifyToken as any,
+  [
+    body("name").notEmpty().withMessage("Name is required"),
+    body("description").notEmpty().withMessage("Description is required"),
+    body("roomSize").notEmpty().withMessage("Room Size is required"),
+    body("typeBed").notEmpty().withMessage("Type bed is required"),
+  ],
+  upload.array("imageFiles", 6),
+  async (req: Request, res: Response): Promise<any> => {
+    try {
+      const imageFiles = req.files as Express.Multer.File[];
+      const newRoom: Room = req.body;
+      const imageUrls = await uploadImages(imageFiles);
+      newRoom.imageUrls = imageUrls;
+
+      const hotel = await Hotel.findOneAndUpdate(
+        {
+          _id: req.params.hotelId,
+          userId: req.userId,
+        },
+        {
+          $push: { rooms: newRoom }
+        }
+      );
+      if(!hotel){
+        return res.status(404).json({message:"Hotel not found"});
+      }
+
+      res.status(201).json(hotel);
+    } catch (error) {
+      res.status(500).json({ message: "Something went wrong" });
+    }
+  }
+);
 router.get("/:id", verifyToken as any, async (req: Request, res: Response) => {
   const id = req.params.id.toString();
   try {

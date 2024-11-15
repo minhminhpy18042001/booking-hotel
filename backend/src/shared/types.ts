@@ -22,6 +22,7 @@ export type HotelType = {
   imageUrls: string[];
   lastUpdated: Date;
   bookings: BookingType[];
+  rooms: Room[];
 };
 
 export type BookingType = {
@@ -37,6 +38,15 @@ export type BookingType = {
   totalCost: number;
   statusBooking:string;
 };
+export type Room={
+  _id:string;
+  name:string;
+  roomSize:string;
+  description: string;
+  typeBed:string;
+  imageUrls: string[];
+  Bookings: BookingType[];
+}
 
 export type HotelSearchResponse = {
   data: HotelType[];

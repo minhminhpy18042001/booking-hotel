@@ -10,6 +10,7 @@ import Search from "./pages/Search";
 import Detail from "./pages/Detail";
 import Booking from "./pages/Booking";
 import MyBookings from "./pages/MyBookings";
+import AddRoom from "./pages/AddRoom";
 
 
 
@@ -49,6 +50,12 @@ const App =()=>{
             <EditHotel/> 
           </Layout>
         }/>
+        <Route path ="/edit-hotel/:hotelId/addRoom" element={
+          <Layout>
+            <AddRoom/> 
+          </Layout>
+        }/>
+
          <Route path ="/my-hotels" element={
           <Layout>
             <MyHotels/> 
