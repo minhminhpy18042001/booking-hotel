@@ -19,12 +19,13 @@ export type BookingFormData={
     checkIn: string;
     checkOut: string;
     hotelId: string;
+    roomId:string;
     totalCost: number;
 }
 
 const BookingForm =({ currentUser,totalCost}: Props)=>{
     const search = useSearchContext();
-    const { hotelId } = useParams();
+    const { hotelId,roomId } = useParams();
     const { showToast } = useAppContext();
     const navigate =useNavigate();
     const { mutate: bookRoom, isLoading } = useMutation(
@@ -48,6 +49,7 @@ const BookingForm =({ currentUser,totalCost}: Props)=>{
         checkIn: search.checkIn.toISOString(),
         checkOut: search.checkOut.toISOString(),
         hotelId: hotelId,
+        roomId:roomId,
         totalCost: totalCost,
     }});
     const onSubmit = async (formData: BookingFormData) => {

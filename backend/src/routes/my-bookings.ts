@@ -45,7 +45,6 @@ router.put("/:bookingId",verifyToken as any,async (req: Request, res: Response):
         //     arrayFilters:[{bookings:{_id:req.params.bookingId}}]
         // }
         );
-        console.log(hotel)
         if (!hotel) {
             return res.status(404).json({ message: "Hotel not found" });
         }

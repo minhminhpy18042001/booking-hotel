@@ -28,6 +28,7 @@ export type HotelType = {
 export type BookingType = {
   _id: string;
   userId: string;
+  roomId:string;
   firstName: string;
   lastName: string;
   email: string;

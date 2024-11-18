@@ -42,7 +42,7 @@ router.get("/search", async (req: Request, res: Response) => {
   }
 });
 router.post(
-  "/:hotelId/bookings",
+  "/:hotelId/bookings/:roomId",
   verifyToken as any,
   async (req: Request, res: Response):Promise<any> => {
     try {  

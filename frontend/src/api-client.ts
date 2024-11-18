@@ -171,7 +171,7 @@ export const fetchHotelById =async(hotelId:string): Promise<HotelType> =>{
 
 export const createRoomBooking = async (formData: BookingFormData) => {
   const response = await fetch(
-    `${API_BASE_URL}/api/hotels/${formData.hotelId}/bookings`,
+    `${API_BASE_URL}/api/hotels/${formData.hotelId}/bookings/${formData.roomId}`,
     {
       method: "POST",
       headers: {

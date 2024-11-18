@@ -8,7 +8,7 @@ import BookingDetailSummary from "../components/BookingDetailSummary";
 
 const Booking =()=>{
     const search =useSearchContext();
-    const {hotelId}=useParams();
+    const {hotelId,roomId}=useParams();
     const[numberOfNights,setNumberOfNights]=useState<number>(0);
     useEffect(()=>{
         if(search.checkIn&& search.checkOut){
@@ -18,7 +18,11 @@ const Booking =()=>{
     },[search.checkIn,search.checkOut]);
     const {data: hotel}=useQuery("fetchHotelById",()=>apiClient.fetchHotelById(hotelId as string),{enabled:!!hotelId,});
     if(!hotel){
-        return<></>
+        return<>hotel not fould</>
+    }
+    const{data:room}=useQuery("fetchRoomHotelById",()=>apiClient.fetchRoomHotelById(hotelId as string,roomId as string),{enabled:!!hotelId &&!!roomId});
+    if (!room){
+        return<>room not fould</>
     }
     const { data: currentUser } =useQuery("fetchCurrentUser",apiClient.fetchCurrentUser);
     return (
@@ -30,8 +34,9 @@ const Booking =()=>{
             childCount={search.childCount}
             numberOfNights={numberOfNights}
             hotel={hotel}
+            room ={room}
             />
-            {currentUser && <BookingForm currentUser ={currentUser} totalCost ={hotel.pricePerNight*numberOfNights} />}
+            {currentUser && <BookingForm currentUser ={currentUser} totalCost ={room.pricePerNight*numberOfNights} />}
             
         </div>
     );

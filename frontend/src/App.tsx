@@ -36,7 +36,7 @@ const App =()=>{
           <SignIn />
         </Layout>}/>
         {isLoggedIn &&<>
-        <Route path ="/hotel/:hotelId/booking" element={
+        <Route path ="/hotel/:hotelId/booking/:roomId" element={
           <Layout>
             <Booking/> 
           </Layout>
