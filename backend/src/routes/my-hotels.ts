@@ -90,6 +90,7 @@ router.put(
     body("name").notEmpty().withMessage("Name is required"),
     body("description").notEmpty().withMessage("Description is required"),
     body("roomSize").notEmpty().withMessage("Room Size is required"),
+    body("pricePerNight").notEmpty().withMessage("Price is required"),
     body("typeBed").notEmpty().withMessage("Type bed is required"),
   ],
   upload.array("imageFiles", 6),
@@ -119,6 +120,36 @@ router.put(
     }
   }
 );
+router.put("/:hotelId/:roomId",verifyToken as any,upload.array("imageFiles"),async (req: Request, res: Response): Promise<any> =>{
+  try {
+    const updateHotel:HotelType =req.body;
+    updateHotel.lastUpdated= new Date();
+    const updateRoom:Room =req.body
+    const hotel = await Hotel.findOneAndUpdate(
+      {
+        _id: req.params.hotelId,
+        userId: req.userId,
+        "rooms._id": req.params.roomId
+      },
+      {
+
+        $set: { 'rooms.$': updateRoom },
+        lastUpdated: new Date(),
+      }, 
+      {new:true}
+    );
+    if(!hotel){
+      return res.status(404).json({message:"Hotel not found"});
+    }
+    const files =req.files as Express.Multer.File[];
+    const updatedImageUrls= await uploadImages(files);
+    hotel.imageUrls=[...updatedImageUrls,...(updateHotel.imageUrls || []),];
+    await hotel.save();
+    res.status(201).json(hotel);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
 router.get("/:id", verifyToken as any, async (req: Request, res: Response) => {
   const id = req.params.id.toString();
   try {
@@ -127,6 +158,30 @@ router.get("/:id", verifyToken as any, async (req: Request, res: Response) => {
       userId: req.userId,
     });
     res.json(hotel);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching hotels" });
+  }
+});
+router.get("/:hotelId/:roomId", verifyToken as any, async (req: Request, res: Response): Promise<any>  => {
+  const id = req.params.hotelId.toString();
+  const roomId = req.params.roomId.toString();
+  try {
+    const hotel = await Hotel.findOne({
+      _id: id,
+      userId: req.userId,
+    });
+    if(!hotel){
+      return res.status(404).json({message:"Hotel not found"});
+    }
+    const room = hotel.rooms.find(room => room._id.toString() === roomId);
+    // const result = hotel.rooms.map((room) => {
+    //   if (room._id === roomId) {
+    //     return room;
+    //   };
+    // });
+    // const result=hotel.rooms.filter((room)=>room._id === roomId);
+
+    res.status(200).send(room);
   } catch (error) {
     res.status(500).json({ message: "Error fetching hotels" });
   }

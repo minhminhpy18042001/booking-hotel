@@ -1,9 +1,9 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-import { HotelSearchResponse, HotelType, UserType } from "../../backend/src/shared/types";
+import { HotelSearchResponse, HotelType, Room, UserType } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 import {CancelBookingFormData} from "./forms/CancelBookingForm/CancelBookingForm"
-import { RoomFormData } from "./forms/AddRoomForm/AddRoomForm";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
@@ -120,6 +120,7 @@ export const updateMyHotelById =async (hotelFormData: FormData) =>{
   
     return response.json();
 };
+
 export type SearchParams ={
   destination?:string;
   checkIn?:string;
@@ -218,6 +219,30 @@ export const addRoom = async (RoomFormData: FormData) => {
 
   if (!response.ok) {
     throw new Error("Failed to add Room");
+  }
+
+  return response.json();
+};
+export const updateRoomHotelById =async (roomFormData: FormData) =>{
+  const response =await fetch(
+    `${API_BASE_URL}/api/my-hotels/${roomFormData.get("hotelId")}/${roomFormData.get("roomId")}`,{
+      method:"PUT",
+      body:roomFormData,
+      credentials:"include",
+    });
+    if (!response.ok) {
+      throw new Error("Failed to update Room");
+    }
+  
+    return response.json();
+};
+export const fetchRoomHotelById = async (hotelId:string,roomId: string): Promise<Room> => {
+  const response = await fetch(`${API_BASE_URL}/api/my-hotels/${hotelId}/${roomId}`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Error fetching Hotels");
   }
 
   return response.json();

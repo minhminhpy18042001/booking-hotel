@@ -20,7 +20,19 @@ const AddRoomDetails =()=>{
                 {errors.name && (
                     <span className="text-red-500">{errors.name.message}</span>
                 )}
-            </label>   
+            </label> 
+            <label className="text-gray-700 text-sm font-bold max-w-[50%]">
+                Price Per Night
+                <input
+                    type="number"
+                    min={1}
+                    className="border rounded w-full py-1 px-2 font-normal"
+                    {...register("pricePerNight", { required: "This field is required" })}
+                ></input>
+                {errors.pricePerNight && (
+                    <span className="text-red-500">{errors.pricePerNight.message}</span>
+                )}
+            </label>
             <label className="text-gray-700 text-sm font-bold max-w-[50%]">
                 Room Size (m<sup>2</sup>)
                 <input
@@ -37,11 +49,12 @@ const AddRoomDetails =()=>{
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an option</label>
             <select
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                {...register("description", { required: "This field is required" })}>
+                {...register("typeBed", { required: "This field is required" })}>
                 <option selected>Choose type bed</option>
                 <option value="1 Double Bed">1 Double Bed</option>
                 <option value="1 Single Bed">1 Single Bed</option>
                 <option value="2 Single Bed">2 Single Bed</option>
+                <option value="1 Single Bed,1 Double Bed">1 Single Bed,1 Double Bed</option>
             </select>
             </div>
             <label className="text-gray-700 text-sm font-bold flex-1">

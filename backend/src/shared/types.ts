@@ -44,6 +44,7 @@ export type Room={
   roomSize:string;
   description: string;
   typeBed:string;
+  pricePerNight:number;
   imageUrls: string[];
   Bookings: BookingType[];
 }

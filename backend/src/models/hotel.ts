@@ -17,6 +17,7 @@ const roomSchema =new mongoose.Schema<Room>({
   roomSize:{type:String, required:true},
   description:{type:String, required:true},
   typeBed:{type:String,required:true},
+  pricePerNight:{type:Number,required:true},
   imageUrls:[{ type: String, required: true }],
   Bookings:[bookingSchema],
 });

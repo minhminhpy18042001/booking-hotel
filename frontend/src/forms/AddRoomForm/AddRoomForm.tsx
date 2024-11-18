@@ -4,9 +4,12 @@ import AddRoomDetails from "./AddRoomDetails";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import * as apiClient from "../../api-client";
+import { Room } from "../../../../backend/src/shared/types";
+import { useEffect } from "react";
 export type RoomFormData = {
     name: string;
     description: string;
+    pricePerNight:Number;
     typeBed: string;
     roomSize:string;
     imageFiles: FileList;
@@ -14,14 +17,18 @@ export type RoomFormData = {
     hotelId:string;
 };
 type Props = {
+    room?:Room;
     onSave: (hotelFormData: FormData) => void;
     isLoading: boolean;
 };
 
 
-const AddRoomForm = ({ onSave,isLoading}: Props) => {
+const AddRoomForm = ({ onSave,isLoading,room}: Props) => {
     const formMethods = useForm<RoomFormData>();
-    const { handleSubmit} = formMethods;
+    const { handleSubmit,reset} = formMethods;
+    useEffect(()=>{
+        reset(room);
+    },[room,reset])
 
     const { hotelId } = useParams();
     const {data: hotel}=useQuery("fetchHotelById",()=>apiClient.fetchHotelById(hotelId as string),{enabled:!!hotelId,});
@@ -30,8 +37,12 @@ const AddRoomForm = ({ onSave,isLoading}: Props) => {
     }
     const onSubmit = handleSubmit((formDataJson: RoomFormData) => {
         const formData = new FormData();
+        if(room){
+            formData.append("roomId",room._id)
+        }
         formData.append("name", formDataJson.name);
         formData.append("roomSize",formDataJson.roomSize);
+        formData.append("pricePerNight", formDataJson.pricePerNight.toString());
         formData.append("description", formDataJson.description);
         formData.append("typeBed", formDataJson.typeBed);
         formData.append('hotelId',hotelId||"");

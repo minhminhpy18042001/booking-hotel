@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom"
 import * as apiClient from "../api-client";
 import { AiFillStar } from "react-icons/ai";
 import GuestInfoForm from "../forms/GuestInfoForm/GuestInfoForm";
+import { FiMaximize2 } from "react-icons/fi";
+import { FaBed } from "react-icons/fa6";
+import { BiMoney } from "react-icons/bi";
 const Detail = () => {
     const { hotelId } = useParams();
     const { data: hotel } = useQuery("fetchHotelById", () => apiClient.fetchHotelById(hotelId as string), { enabled: !!hotelId, });
@@ -52,6 +55,24 @@ const Detail = () => {
                     />
                 </div>
             </div>
+            <div className="grid grid-rows-2 lg:grid-rows-4">
+                {hotel.rooms.map((room) => (
+                    <div className="border border-slate-300">
+                    <h2 className="text-xl font-bold text-blue-400">{room.name}</h2>
+                    <div className="grid grid-cols">
+                      <div className="rounded-sm p-3 flex items-center font-normal text-lg">
+                        <FiMaximize2 className="mr-1" />
+                        {room.roomSize}m<sup>2</sup>|
+                        <BiMoney className="mr-1" />
+                        {room.pricePerNight}$|
+                        <FaBed className="mr-1" />
+                        {room.typeBed}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            
         </div>
     );
 };
