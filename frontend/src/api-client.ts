@@ -192,8 +192,9 @@ export const cancelRoomBooking = async (formData: CancelBookingFormData) => {
       method:"PUT",
       credentials:"include",
     });
+    const body = await response.json();
     if (!response.ok) {
-      throw new Error("Failed to cancel Booking");
+      throw new Error(body.message);
     }
   
     return response.json();

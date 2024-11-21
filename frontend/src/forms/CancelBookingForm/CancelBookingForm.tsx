@@ -19,8 +19,8 @@ const CancelBookingForm =({booking}: Props)=>{
             showToast({ message: "Cancel Booking Successed!", type: "SUCCESS" });
             window.location.reload(); 
           },
-          onError: () => {
-            showToast({ message: "Error cancel booking", type: "ERROR" });
+          onError: (error: Error) => {
+            showToast({ message: error.message, type: "ERROR" });
           },
         }
       );

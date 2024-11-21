@@ -16,18 +16,14 @@ const Booking =()=>{
             setNumberOfNights(Math.ceil(nights));
         }
     },[search.checkIn,search.checkOut]);
-    const {data: hotel}=useQuery("fetchHotelById",()=>apiClient.fetchHotelById(hotelId as string),{enabled:!!hotelId,});
-    if(!hotel){
-        return<>hotel not fould</>
-    }
+    const {data: hotel}=useQuery("fetchHotelById",()=>apiClient.fetchHotelById(hotelId as string),{enabled:!!hotelId});
+ 
     const{data:room}=useQuery("fetchRoomHotelById",()=>apiClient.fetchRoomHotelById(hotelId as string,roomId as string),{enabled:!!hotelId &&!!roomId});
-    if (!room){
-        return<>room not fould</>
-    }
+
     const { data: currentUser } =useQuery("fetchCurrentUser",apiClient.fetchCurrentUser);
     return (
         <div className="grid md:grid-cols-[1fr_2fr]">
-            <BookingDetailSummary
+            {hotel && room &&<BookingDetailSummary
             checkIn={search.checkIn}
             checkOut={search.checkOut}
             adultCount={search.adultCount}
@@ -35,8 +31,8 @@ const Booking =()=>{
             numberOfNights={numberOfNights}
             hotel={hotel}
             room ={room}
-            />
-            {currentUser && <BookingForm currentUser ={currentUser} totalCost ={room.pricePerNight*numberOfNights} />}
+            />}
+            {currentUser && room && <BookingForm currentUser ={currentUser} totalCost ={room.pricePerNight*numberOfNights} />}
             
         </div>
     );

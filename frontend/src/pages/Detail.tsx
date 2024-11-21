@@ -2,7 +2,6 @@ import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom"
 import * as apiClient from "../api-client";
 import { AiFillStar } from "react-icons/ai";
-import GuestInfoForm from "../forms/GuestInfoForm/GuestInfoForm";
 import { FiMaximize2 } from "react-icons/fi";
 import { FaBed } from "react-icons/fa6";
 import { BiMoney } from "react-icons/bi";
