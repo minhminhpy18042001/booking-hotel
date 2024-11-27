@@ -166,8 +166,21 @@ export const fetchHotels = async (): Promise<HotelType[]> => {
   }
   return response.json();
 };
+export const fetchRecentlyWatchedHotels = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/hotels/recently-watched`, {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Error fetching recently watched hotels');
+  }
+
+  return response.json();
+};
 export const fetchHotelById =async(hotelId:string): Promise<HotelType> =>{
-  const response = await fetch(`${API_BASE_URL}/api/hotels/${hotelId}`);
+  const response = await fetch(`${API_BASE_URL}/api/hotels/${hotelId}`, {
+    credentials: 'include', // Ensure cookies are sent with the request
+  });
   if (!response.ok) {
     throw new Error("Error fetching Hotel");
   }

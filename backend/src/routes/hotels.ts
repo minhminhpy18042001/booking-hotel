@@ -41,6 +41,10 @@ router.get("/search", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+router.get("/recently-watched", (req: Request, res: Response) => {
+  const recentlyWatched = req.cookies.recentlyWatched ? JSON.parse(req.cookies.recentlyWatched) : [];
+  res.status(200).json(recentlyWatched);
+});
 router.post(
   "/:hotelId/bookings/:roomId",
   verifyToken as any,
@@ -94,6 +98,15 @@ router.get("/:id",[param("id").notEmpty().withMessage("Hotel ID is required")],
 
     try {
       const hotel = await Hotel.findById(id);
+      const recentlyWatched = req.cookies.recentlyWatched ? JSON.parse(req.cookies.recentlyWatched) : [];
+      if (!recentlyWatched.includes(id)) {
+        recentlyWatched.push(id);
+      }
+      res.cookie("recentlyWatched", JSON.stringify(recentlyWatched), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
       res.json(hotel);
     } catch (error) {
       console.log(error);
@@ -101,6 +114,7 @@ router.get("/:id",[param("id").notEmpty().withMessage("Hotel ID is required")],
     }
   }
 );
+
 const constructSearchQuery = (queryParams: any) => {
   let constructedQuery: any = {};
 
