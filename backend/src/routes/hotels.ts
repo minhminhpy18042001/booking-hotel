@@ -51,7 +51,10 @@ router.post(
         userId: req.userId,
         statusBooking:"booking",
       };
-
+      if (newBooking.totalCost ===0)
+        {
+          return res.status(400).json({message:"Change checkOut date"})
+        }
       const hotel = await Hotel.findOneAndUpdate(
         { _id: req.params.hotelId },
         {
@@ -71,7 +74,15 @@ router.post(
     }
   }
 );
-
+router.get("/", async (req: Request, res: Response) => {
+  try {
+    const hotels = await Hotel.find().sort("-lastUpdated");
+    res.json(hotels);
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Error fetching hotels" });
+  }
+});
 router.get("/:id",[param("id").notEmpty().withMessage("Hotel ID is required")],
   async (req: Request, res: Response): Promise<any>  => {
     const errors = validationResult(req);

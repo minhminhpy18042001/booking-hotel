@@ -12,6 +12,7 @@ import Booking from "./pages/Booking";
 import MyBookings from "./pages/MyBookings";
 import AddRoom from "./pages/AddRoom";
 import EditRoom from "./pages/EditRoom";
+import Home from "./pages/Home";
 
 
 
@@ -21,7 +22,7 @@ const App =()=>{
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout>
-          <p>Home Page</p>
+          <Home/>
         </Layout>}/>
         <Route path="/search" element={<Layout>
           <Search/>

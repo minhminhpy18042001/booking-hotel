@@ -36,7 +36,7 @@ const BookingForm =({ currentUser,totalCost}: Props)=>{
             navigate(`/my-bookings`);
           },
           onError: () => {
-            showToast({ message: "Error saving booking", type: "ERROR" });
+            showToast({ message: "Change CheckOut date", type: "ERROR" });
           },
         }
       );

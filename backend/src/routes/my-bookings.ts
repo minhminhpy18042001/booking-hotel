@@ -43,8 +43,9 @@ router.put("/:bookingId",verifyToken as any,async (req: Request, res: Response):
         if(!booking){return res.status(404).json({ message: "Booking not found"})}
 
         const today =new Date()
+        const before =booking.checkIn.getTime() >= today.getTime()
         const nights =Math.abs(booking.checkIn.getTime()-today.getTime())/(1000*60*60*24);
-        if (nights<3){return res.status(404).json({ message: "Only can be cancelled before 3 days"})}
+        if (nights<3 || !before){return res.status(404).json({ message: "Only can be cancelled before 3 days"})}
         const hotel = await Hotel.findOneAndUpdate({
             bookings: { $elemMatch: { _id: bookingId, } },
         },
