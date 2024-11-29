@@ -1,6 +1,6 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-import { HotelSearchResponse, HotelType, Room, UserType } from "../../backend/src/shared/types";
+import { BookingType, HotelSearchResponse, HotelType, Room, UserType } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 import {CancelBookingFormData} from "./forms/CancelBookingForm/CancelBookingForm"
 
@@ -266,3 +266,23 @@ export const fetchRoomHotelById = async (hotelId:string,roomId: string): Promise
 
   return response.json();
 };
+export const addReview =async(reviewFormData:FormData)=>{
+  const response = await fetch(`${API_BASE_URL}/api/my-bookings/review/${reviewFormData.get("bookingId")}`, {
+    method: "PUT",
+    credentials: "include",
+    body: reviewFormData,
+  });
+  if (!response.ok) {
+    throw new Error("Failed to add Room");
+  }
+  return response.json();
+}
+export const fetchReviewById= async(bookingId:string):Promise<BookingType>=>{
+  const response = await fetch(`${API_BASE_URL}/api/my-bookings/${bookingId}`,{
+    credentials:"include",
+  })
+  if (!response.ok) {
+    throw new Error("Error fetching Review");
+  }
+  return response.json();
+}

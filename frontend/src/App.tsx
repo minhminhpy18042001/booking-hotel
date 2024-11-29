@@ -13,6 +13,8 @@ import MyBookings from "./pages/MyBookings";
 import AddRoom from "./pages/AddRoom";
 import EditRoom from "./pages/EditRoom";
 import Home from "./pages/Home";
+import AddReview from "./pages/AddReview";
+import EditReview from "./pages/EditReview";
 
 
 
@@ -71,6 +73,16 @@ const App =()=>{
         <Route path ="/my-bookings" element={
           <Layout>
             <MyBookings/> 
+          </Layout>
+        }/>
+        <Route path ="/my-bookings/review/:bookingId" element={
+          <Layout>
+            <AddReview/> 
+          </Layout>
+        }/>
+        <Route path ="/my-bookings/review/:bookingId/edit" element={
+          <Layout>
+            <EditReview/> 
           </Layout>
         }/>
         </>}

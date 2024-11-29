@@ -79,6 +79,18 @@ const Detail = () => {
                     </div>
                 ))}
             </div>
+            <div>
+                <h2 className="text-2xl font-bold">Reviews</h2>
+                {hotel.bookings.map((booking)=>(
+                    (booking.rating!==undefined)&&
+                    <div className="border border-slate-300 p-3">
+                        <div className="flex justify-between items-center">
+                            <div className="text-lg font-bold">{booking.firstName}{booking.lastName}</div>
+                            <div className="rounded-sm p-3 flex items-center font-normal text-lg">{booking.rating.review}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
 
         </div>
     );

@@ -9,6 +9,8 @@ import {v2 as cloudinary} from "cloudinary";
 import myHotelRoutes from "./routes/my-hotels";
 import hotelsRoutes from "./routes/hotels";
 import bookingRoutes from "./routes/my-bookings";
+import cron from 'node-cron';
+import Hotel from "./models/hotel";
 cloudinary.config({
     cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
     api_key:process.env.CLOUDINARY_API_KEY,
@@ -17,6 +19,29 @@ cloudinary.config({
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string);
 
 const app =express();
+cron.schedule('0 * * * *', async () => {
+    try {
+        const currentDate = new Date();
+        const hotels = await Hotel.find({});
+
+        for (const hotel of hotels) {
+            const updatedBookings = hotel.bookings.map((booking) => {
+                if (new Date(booking.checkOut) < currentDate && booking.statusBooking === 'booking') {
+                    booking.statusBooking = 'completed'; // Update the 
+                    console.log(booking._id)
+                }
+                return booking;
+            });
+
+            hotel.bookings = updatedBookings;
+            await hotel.save();
+        }
+
+        console.log('Booking statuses updated successfully');
+    } catch (error) {
+        console.error('Error updating booking statuses:', error);
+    }
+});
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended :true}));

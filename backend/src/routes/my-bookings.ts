@@ -2,8 +2,9 @@ import express, { Request, Response } from "express";
 import verifyToken from "../middleware/auth";
 import Hotel from "../models/hotel";
 import { HotelType } from "../shared/types";
+import multer from "multer";
 
-
+const upload = multer(); 
 const router = express.Router();
 
 router.get("/", verifyToken as any, async (req: Request, res: Response) => {
@@ -31,12 +32,28 @@ router.get("/", verifyToken as any, async (req: Request, res: Response) => {
         res.status(500).json({ message: "Unable to fetch bookings" });
     }
 });
+router.get("/:bookingId",verifyToken as any,async (req: Request, res: Response): Promise<any>=>{
+    try {
+        const bookingId =req.params.bookingId;
+        const hotel =await Hotel.findOne({bookings: { $elemMatch: { userId: req.userId,_id: bookingId, } }})
+        if(!hotel){
+            return res.status(404).json({ message: "Booking not found" });
+        }
+        const booking = hotel.bookings.find(b => b._id.toString() === bookingId.toString());
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+        res.status(200).send(booking)
+    } catch (error) {
+        res.status(500).json({ message: "Something went wrong" });
+    }
+})
 router.put("/:bookingId",verifyToken as any,async (req: Request, res: Response): Promise<any> =>{
     try {
 
         const bookingId=req.params.bookingId
 
-        const hotela =await Hotel.findOne({bookings: { $elemMatch: { _id: bookingId, } }})
+        const hotela =await Hotel.findOne({bookings: { $elemMatch: { userId: req.userId,_id: bookingId, } }})
         if(!hotela){return res.status(404).json({ message: "Hotel not found" })}
 
         const booking = hotela.bookings.find(booking => booking._id.toString() === bookingId);
@@ -63,6 +80,37 @@ router.put("/:bookingId",verifyToken as any,async (req: Request, res: Response):
         res.status(201).json(hotel);
     } catch (error) {
         res.status(500).json({ message: "Something went wrong" });
+    }
+});
+router.put("/review/:bookingId",verifyToken as any,upload.none(),async (req: Request, res: Response): Promise<any> =>{
+    try {
+        const bookingId =req.params.bookingId;
+        const { score, review } = req.body;
+        if ( score < 1 || score > 10) {
+            return res.status(400).json({ message: "Score must be a number between 1 and 10." });
+        }
+        // if (typeof review !== 'string' || review.trim() === '') {
+        //     return res.status(400).json({ message: "Review cannot be empty." });
+        // }
+
+        const hotel =await Hotel.findOne({bookings: { $elemMatch: { userId: req.userId,_id: bookingId, } }})
+
+        if (!hotel) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+        // Update the review in the booking
+        const booking = hotel.bookings.find(b => b._id.toString() === bookingId.toString());
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+        // Update the rating field
+        booking.rating = { score, review }; // Assuming rating is an object with score and review
+
+        // Save the updated hotel document
+        await hotel.save();
+        res.status(200).json({ message: "Review updated successfully", booking });
+    } catch (error) {
+        res.status(500).json({ message: error });
     }
 });
 export default router;

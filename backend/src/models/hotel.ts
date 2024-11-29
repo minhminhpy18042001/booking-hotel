@@ -12,6 +12,10 @@ const bookingSchema = new mongoose.Schema<BookingType>({
   roomId:{type:String,required:true},
   totalCost: { type: Number, required: true },
   statusBooking:{type: String,required:true},
+  rating: {
+    score: { type: Number, min: 1, max: 10 }, // Example of a score field
+    review: { type: String } // Optional review field
+},
 });
 const roomSchema =new mongoose.Schema<Room>({
   name:{ type:String,required:true},
@@ -39,5 +43,6 @@ userId: { type: String, required: true },
   bookings: [bookingSchema],
   rooms:[roomSchema],
 });
+
 const Hotel = mongoose.model<HotelType>("Hotel", hotelSchema);
 export default Hotel;

@@ -38,6 +38,10 @@ export type BookingType = {
   checkOut: Date;
   totalCost: number;
   statusBooking:string;
+  rating: {
+    score: number,
+    review: string 
+},
 };
 export type Room={
   _id:string;
