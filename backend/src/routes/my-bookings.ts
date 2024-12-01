@@ -85,7 +85,8 @@ router.put("/:bookingId",verifyToken as any,async (req: Request, res: Response):
 router.put("/review/:bookingId",verifyToken as any,upload.none(),async (req: Request, res: Response): Promise<any> =>{
     try {
         const bookingId =req.params.bookingId;
-        const { score, review } = req.body;
+        const { score, review,comment } = req.body;
+        const date =new Date();
         if ( score < 1 || score > 10) {
             return res.status(400).json({ message: "Score must be a number between 1 and 10." });
         }
@@ -104,7 +105,7 @@ router.put("/review/:bookingId",verifyToken as any,upload.none(),async (req: Req
             return res.status(404).json({ message: "Booking not found" });
         }
         // Update the rating field
-        booking.rating = { score, review }; // Assuming rating is an object with score and review
+        booking.rating = { score, review,comment,date }; // Assuming rating is an object with score and review
 
         // Save the updated hotel document
         await hotel.save();

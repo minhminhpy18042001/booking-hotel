@@ -14,7 +14,9 @@ const bookingSchema = new mongoose.Schema<BookingType>({
   statusBooking:{type: String,required:true},
   rating: {
     score: { type: Number, min: 1, max: 10 }, // Example of a score field
-    review: { type: String } // Optional review field
+    review: { type: String }, // Optional review field
+    comment:{type:String},
+    date:{type:Date}
 },
 });
 const roomSchema =new mongoose.Schema<Room>({

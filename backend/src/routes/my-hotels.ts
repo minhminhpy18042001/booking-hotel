@@ -122,9 +122,10 @@ router.put(
 );
 router.put("/:hotelId/:roomId",verifyToken as any,upload.array("imageFiles"),async (req: Request, res: Response): Promise<any> =>{
   try {
-    const updateHotel:HotelType =req.body;
-    updateHotel.lastUpdated= new Date();
     const updateRoom:Room =req.body
+    const files =req.files as Express.Multer.File[];
+    const updatedImageUrls= await uploadImages(files);
+    updateRoom.imageUrls=[...updatedImageUrls,...(updateRoom.imageUrls || []),];
     const hotel = await Hotel.findOneAndUpdate(
       {
         _id: req.params.hotelId,
@@ -141,9 +142,6 @@ router.put("/:hotelId/:roomId",verifyToken as any,upload.array("imageFiles"),asy
     if(!hotel){
       return res.status(404).json({message:"Hotel not found"});
     }
-    const files =req.files as Express.Multer.File[];
-    const updatedImageUrls= await uploadImages(files);
-    hotel.imageUrls=[...updatedImageUrls,...(updateHotel.imageUrls || []),];
     await hotel.save();
     res.status(201).json(hotel);
   } catch (error) {

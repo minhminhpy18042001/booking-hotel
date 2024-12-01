@@ -15,9 +15,9 @@ const EditReview = () => {
             enabled: !!bookingId,
         }
     );
-    let review: ReviewFormData = { bookingId: "", score: 1, review: "" };
+    let review: ReviewFormData = { bookingId: "", score: 1, review: "",comment:"" };
     if (booking) {
-        review = { bookingId: booking._id, score: booking.rating.score, review: booking.rating.review };
+        review = { bookingId: booking._id, score: booking.rating.score, review: booking.rating.review,comment:booking.rating.comment};
     }
     const { mutate, isLoading } = useMutation(apiClient.addReview, {
         onSuccess: () => {

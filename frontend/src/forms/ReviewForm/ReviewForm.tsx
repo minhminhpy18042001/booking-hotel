@@ -7,6 +7,7 @@ export type ReviewFormData = {
    bookingId:string;
    score:number;
    review: string;
+   comment:string;
 };
 type Props = {
     review?:ReviewFormData
@@ -35,7 +36,7 @@ const ReviewForm = ({ onSave,isLoading,review}: Props) => {
         formData.append("bookingId",bookingId)
         formData.append("score", formDataJson.score.toString());
         formData.append("review",formDataJson.review);
-        
+        formData.append("comment",formDataJson.comment);
         onSave(formData);
     });
 

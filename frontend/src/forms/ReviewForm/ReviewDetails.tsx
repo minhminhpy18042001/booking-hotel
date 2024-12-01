@@ -21,14 +21,25 @@ const ReviewDetails =()=>{
                 )}
             </label>
             <label className="text-gray-700 text-sm font-bold flex-1">
-                Review
+                    Review
+                    <input
+                        type="text"
+                        className="border rounded w-full py-1 px-2 font-normal"
+                        {...register("review", { required: "This field is required" })}
+                    ></input>
+                    {errors.review && (
+                        <span className="text-red-500">{errors.review.message}</span>
+                    )}
+                </label>
+            <label className="text-gray-700 text-sm font-bold flex-1">
+                Comment
                 <textarea
                     rows={10}
                     className="border rounded w-full py-1 px-2 font-normal"
-                    {...register("review", { required: "This field is required" })}
+                    {...register("comment", { required: "This field is required" })}
                 ></textarea>
-                {errors.review && (
-                    <span className="text-red-500">{errors.review.message}</span>
+                {errors.comment && (
+                    <span className="text-red-500">{errors.comment.message}</span>
                 )}
             </label>
         </div>

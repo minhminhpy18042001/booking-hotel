@@ -40,7 +40,9 @@ export type BookingType = {
   statusBooking:string;
   rating: {
     score: number,
-    review: string 
+    review: string,
+    comment:string,
+    date:Date; 
 },
 };
 export type Room={

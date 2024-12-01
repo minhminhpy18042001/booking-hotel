@@ -6,13 +6,29 @@ import { FiMaximize2 } from "react-icons/fi";
 import { FaBed } from "react-icons/fa6";
 import { BiMoney } from "react-icons/bi";
 import { useAppContext } from "../contexts/AppContext";
+import { useState } from "react";
+import RoomDetail from "../forms/DetailsForm/RoomDetail";
 const Detail = () => {
     const { hotelId } = useParams();
+    const [selectedRoom, setSelectedRoom] = useState("");
+    const [openModal,setOpenModal]=useState(false);
     const { data: hotel } = useQuery("fetchHotelById", () => apiClient.fetchHotelById(hotelId as string), { enabled: !!hotelId, });
     const {isLoggedIn}=useAppContext();
+    const handleRoomClick = (roomId:string) => {
+        setSelectedRoom(roomId);
+    };
     if (!hotel) {
         return <></>;
     }
+    const calculateAverageRating = () => {
+        const totalScore = hotel.bookings.reduce((acc, booking) => {
+            return booking.rating ? acc + booking.rating.score : acc;
+        }, 0);
+        const numberOfReviews = hotel.bookings.filter(booking => booking.rating).length;
+        return numberOfReviews > 0 ? (totalScore / numberOfReviews).toFixed(1) : 0; // Return average, or 0 if no reviews
+    };
+
+    const averageRating = calculateAverageRating();
     return (
         <div className="space-y-6">
             <div>
@@ -56,37 +72,65 @@ const Detail = () => {
                     />
                 </div> */}
             </div >
-            <h2 className="text-2xl font-bold">Availability</h2>
-            <div className="grid grid-rows-2 lg:grid-rows-4">
-                {hotel.rooms.map((room) => (
-                    <div className="border border-slate-300">
-                        <span className="flex justify-between p-1">
-                        <div className="text-xl font-bold text-blue-400 underline hover:text-red-900">{room.name}</div>
-                        {isLoggedIn ?<>
-                        <Link to={`/hotel/${hotelId}/booking/${room._id}`} className="bg-blue-600 text-white h-full p-1 font-bold hover:bg-blue-500 text-xl">reserve</Link></>:
-                        <Link to={`/sign-in`} className="text-xl font-bold text-blue-400 underline hover:text-red-900"> Login to booking</Link>}
-                        </span>          
-                        <div className="grid grid-cols">
-                            <div className="rounded-sm p-3 flex items-center font-normal text-lg">
-                                <FiMaximize2 className="mr-1" />
-                                {room.roomSize}m<sup>2</sup>|
-                                <BiMoney className="mr-1" />
-                                {room.pricePerNight}$|
-                                <FaBed className="mr-1" />
-                                {room.typeBed}
+            <div className="p-4">
+                <h2 className="text-2xl font-bold mb-4">Availability</h2>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {hotel.rooms.map((room) => (
+                        <div className="border border-slate-300 rounded-lg shadow-md p-4 bg-white flex flex-col">
+                            <div className="flex justify-between items-center mb-2">
+                                <div className="text-xl font-bold text-blue-400 underline hover:text-red-900"
+                                 onClick={() =>{ handleRoomClick(room._id);setOpenModal(true)}}>
+                                    {room.name}</div>
+                                {isLoggedIn ? (
+                                    <Link to={`/hotel/${hotelId}/booking/${room._id}`} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500">
+                                        Reserve
+                                    </Link>
+                                ) : (
+                                    <Link to={`/sign-in`} className="text-blue-400 underline hover:text-red-900">Login to Book</Link>
+                                )}
+                            </div>
+                            <div className="flex-1">
+                                <div className="text-lg font-normal text-gray-700">
+                                    <FiMaximize2 className="inline mr-1" />
+                                    {room.roomSize} m<sup>2</sup> |
+                                    <BiMoney className="inline mr-1" />
+                                    {room.pricePerNight} $ |
+                                    <FaBed className="inline mr-1" />
+                                    {room.typeBed}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+                {openModal && (
+                <RoomDetail roomId={selectedRoom} hotelId={hotel._id} onClose={setOpenModal} />
+            )}
             </div>
             <div>
                 <h2 className="text-2xl font-bold">Reviews</h2>
+                <div className="text-lg font-semibold mb-4">Average Rating:
+                    {/* <span className="text-yellow-500 ml-2">{'★'.repeat(Math.round(averageRating))}</span> */}
+                    <span className="text-gray-500 ml-1">{averageRating}/10</span>
+                </div>
                 {hotel.bookings.map((booking)=>(
                     (booking.rating!==undefined)&&
-                    <div className="border border-slate-300 p-3">
-                        <div className="flex justify-between items-center">
-                            <div className="text-lg font-bold">{booking.firstName}{booking.lastName}</div>
-                            <div className="rounded-sm p-3 flex items-center font-normal text-lg">{booking.rating.review}</div>
+                    <div className="border border-slate-300 rounded-lg shadow-lg p-4 bg-white flex items-start">
+                        {/* Avatar */}
+                        <img
+                            src={`https://avatar.iran.liara.run/public/13`} 
+                            alt={`${booking.firstName} ${booking.lastName}`} 
+                            className="w-16 h-16 rounded-full border-2 border-gray-300 shadow-md mr-4"
+                        />
+                        <div className="flex-1">
+                            <div className="flex justify-between items-center mb-2">
+                                <div className="text-xl font-bold text-gray-800">{booking.firstName} {booking.lastName}</div>
+                                <div className="flex items-center">
+                                    <span className="text-yellow-500">{'★'.repeat(booking.rating.score)}</span>
+                                    <span className="text-gray-500 ml-1 font-bold">{booking.rating.review}</span>
+                                </div>
+                            </div>
+                            <div className="text-gray-600 text-sm">{booking.rating.comment}</div>
+                            <div className="text-gray-500 text-xs mt-1">{new Date(booking.rating.date).toLocaleDateString()}</div>
                         </div>
                     </div>
                 ))}
