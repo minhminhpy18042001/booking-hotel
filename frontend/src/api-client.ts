@@ -256,7 +256,7 @@ export const updateRoomHotelById =async (roomFormData: FormData) =>{
     return response.json();
 };
 export const fetchRoomHotelById = async (hotelId:string,roomId: string): Promise<Room> => {
-  const response = await fetch(`${API_BASE_URL}/api/my-hotels/${hotelId}/${roomId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/hotels/${hotelId}/${roomId}`, {
     credentials: "include",
   });
 

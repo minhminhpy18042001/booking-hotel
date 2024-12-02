@@ -5,6 +5,7 @@ import Hotel from "../models/hotel";
 import verifyToken from "../middleware/auth";
 import { body } from "express-validator";
 import { HotelType, Room } from "../shared/types";
+import verifyRole from "../middleware/verifyRole";
 const router =express.Router();
 
 const storage =multer.memoryStorage();
@@ -17,6 +18,7 @@ const upload =multer({
 router.post(
   "/",
   verifyToken as any,
+  verifyRole(['owner']),
   [
     body("name").notEmpty().withMessage("Name is required"),
     body("city").notEmpty().withMessage("City is required"),
@@ -54,7 +56,7 @@ router.post(
     }
   }
 );
-router.get("/", verifyToken as any, async (req: Request, res: Response) => {
+router.get("/", verifyToken as any,verifyRole(['owner']), async (req: Request, res: Response) => {
 
   try {
     const hotel = await Hotel.find({ userId: req.userId })
@@ -63,7 +65,7 @@ router.get("/", verifyToken as any, async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching hotels" })
   }
 });
-router.put("/:hotelId",verifyToken as any,upload.array("imageFiles"),async (req: Request, res: Response): Promise<any> =>{
+router.put("/:hotelId",verifyToken as any,verifyRole(['owner']),upload.array("imageFiles"),async (req: Request, res: Response): Promise<any> =>{
   try {
     const updateHotel:HotelType =req.body;
     updateHotel.lastUpdated= new Date();
@@ -86,6 +88,7 @@ router.put("/:hotelId",verifyToken as any,upload.array("imageFiles"),async (req:
 router.put(
   "/:hotelId/addRoom",
   verifyToken as any,
+  verifyRole(['owner']),
   [
     body("name").notEmpty().withMessage("Name is required"),
     body("description").notEmpty().withMessage("Description is required"),
@@ -120,7 +123,7 @@ router.put(
     }
   }
 );
-router.put("/:hotelId/:roomId",verifyToken as any,upload.array("imageFiles"),async (req: Request, res: Response): Promise<any> =>{
+router.put("/:hotelId/:roomId",verifyToken as any,verifyRole(['owner']),upload.array("imageFiles"),async (req: Request, res: Response): Promise<any> =>{
   try {
     const updateRoom:Room =req.body
     const files =req.files as Express.Multer.File[];
@@ -148,7 +151,7 @@ router.put("/:hotelId/:roomId",verifyToken as any,upload.array("imageFiles"),asy
     res.status(500).json({ message: "Something went wrong" });
   }
 });
-router.get("/:id", verifyToken as any, async (req: Request, res: Response) => {
+router.get("/:id", verifyToken as any,verifyRole(['owner']), async (req: Request, res: Response) => {
   const id = req.params.id.toString();
   try {
     const hotel = await Hotel.findOne({
@@ -160,30 +163,7 @@ router.get("/:id", verifyToken as any, async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching hotels" });
   }
 });
-router.get("/:hotelId/:roomId", verifyToken as any, async (req: Request, res: Response): Promise<any>  => {
-  const id = req.params.hotelId.toString();
-  const roomId = req.params.roomId.toString();
-  try {
-    const hotel = await Hotel.findOne({
-      _id: id,
-      userId: req.userId,
-    });
-    if(!hotel){
-      return res.status(404).json({message:"Hotel not found"});
-    }
-    const room = hotel.rooms.find(room => room._id.toString() === roomId);
-    // const result = hotel.rooms.map((room) => {
-    //   if (room._id === roomId) {
-    //     return room;
-    //   };
-    // });
-    // const result=hotel.rooms.filter((room)=>room._id === roomId);
 
-    res.status(200).send(room);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching hotels" });
-  }
-});
 async function uploadImages(imageFiles: Express.Multer.File[]) {
     const uploadPromises = imageFiles.map(async (image) => {
         const b64 = Buffer.from(image.buffer).toString("base64");

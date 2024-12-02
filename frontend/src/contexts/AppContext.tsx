@@ -11,21 +11,24 @@ type ToastMessage={
 type AppContext ={
     showToast:(toastMessage:ToastMessage) => void;
     isLoggedIn:boolean;
+    isOwner:boolean;
 };
 const AppContext =React.createContext<AppContext|undefined>(undefined);
 
 
 export const AppContextProvider =({children}:{children:React.ReactNode}) =>{
     const [toast,setToast]= useState<ToastMessage|undefined>(undefined);
-    const {isError}=useQuery("validateToken",apiClient.validateToken,{
+    const {data:user,isError}=useQuery("validateToken",apiClient.validateToken,{
         retry:false,
     })
+    const isOwner = user?.role === "owner";
     return(
         <AppContext.Provider value={{
             showToast:(toastMessage)=>{
                 setToast(toastMessage);
             },
-            isLoggedIn:!isError
+            isLoggedIn:!isError,
+            isOwner:isOwner,
         }}>
             {toast &&(<Toast message={toast.message} type={toast.type} onClose={()=>setToast(undefined)}
                 />)}

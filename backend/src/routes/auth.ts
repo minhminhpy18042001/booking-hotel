@@ -31,7 +31,7 @@ router.post(
         return res.status(400).json({ message: "Invalid Credentials" });
       }
       const token = jwt.sign(
-        { userId: user.id },
+        {userId:user.id,role:user.role},
         process.env.JWT_SECRET_KEY as string,
         {
           expiresIn: "1d",
@@ -52,7 +52,7 @@ router.post(
 
 
 router.get("/validate-token",verifyToken as any,(req:Request,res:Response)=>{
-  res.status(200).send({userId:req.userId})
+  res.status(200).send({userId:req.userId,role:req.role})
 });
 
 router.post("/logout", (req: Request, res: Response) => {

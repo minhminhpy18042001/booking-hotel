@@ -105,7 +105,7 @@ router.get("/:id",[param("id").notEmpty().withMessage("Hotel ID is required")],
       res.cookie("recentlyWatched", JSON.stringify(recentlyWatched), {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 1 * 24 * 60 * 60 * 1000,
       });
       res.json(hotel);
     } catch (error) {
@@ -114,6 +114,30 @@ router.get("/:id",[param("id").notEmpty().withMessage("Hotel ID is required")],
     }
   }
 );
+router.get("/:hotelId/:roomId", verifyToken as any, async (req: Request, res: Response): Promise<any>  => {
+  const id = req.params.hotelId.toString();
+  const roomId = req.params.roomId.toString();
+  try {
+    const hotel = await Hotel.findOne({
+      _id: id,
+      userId: req.userId,
+    });
+    if(!hotel){
+      return res.status(404).json({message:"Hotel not found"});
+    }
+    const room = hotel.rooms.find(room => room._id.toString() === roomId);
+    // const result = hotel.rooms.map((room) => {
+    //   if (room._id === roomId) {
+    //     return room;
+    //   };
+    // });
+    // const result=hotel.rooms.filter((room)=>room._id === roomId);
+
+    res.status(200).send(room);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching hotels" });
+  }
+});
 
 const constructSearchQuery = (queryParams: any) => {
   let constructedQuery: any = {};
