@@ -3,6 +3,7 @@ import { SignInFormData } from "./pages/SignIn";
 import { BookingType, HotelSearchResponse, HotelType, Room, UserType } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 import {CancelBookingFormData} from "./forms/CancelBookingForm/CancelBookingForm"
+import { UpdateUserFormData } from "./forms/AdminManage/UserManage";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -294,4 +295,15 @@ export const fetchUsers =async():Promise<UserType[]> =>{
     throw new Error("Error fetching Users");
   }
   return response.json();
+}
+export const updateUserRole =async(formData:UpdateUserFormData)=>{
+  const response = await fetch(`${API_BASE_URL}/api/users/updateRole/${formData.userId}/${formData.role}`,{
+    credentials:"include",
+    method:"PUT",
+  });
+    if (!response.ok) {
+      throw new Error("Error Update Users");
+    }
+
+    return response.json();
 }

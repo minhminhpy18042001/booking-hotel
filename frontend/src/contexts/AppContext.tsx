@@ -12,6 +12,7 @@ type AppContext ={
     showToast:(toastMessage:ToastMessage) => void;
     isLoggedIn:boolean;
     isOwner:boolean;
+    isAdmin:boolean;
 };
 const AppContext =React.createContext<AppContext|undefined>(undefined);
 
@@ -22,6 +23,7 @@ export const AppContextProvider =({children}:{children:React.ReactNode}) =>{
         retry:false,
     })
     const isOwner = user?.role === "owner";
+    const isAdmin = user?.role === "admin";
     return(
         <AppContext.Provider value={{
             showToast:(toastMessage)=>{
@@ -29,6 +31,7 @@ export const AppContextProvider =({children}:{children:React.ReactNode}) =>{
             },
             isLoggedIn:!isError,
             isOwner:isOwner,
+            isAdmin:isAdmin,
         }}>
             {toast &&(<Toast message={toast.message} type={toast.type} onClose={()=>setToast(undefined)}
                 />)}

@@ -5,7 +5,7 @@ import HotelManage from "../forms/AdminManage/HotelManage";
 import UserManage from "../forms/AdminManage/UserManage";
 import BookingManage from "../forms/AdminManage/BookingManage";
 const Admin =()=>{
-    const { isLoggedIn, isOwner } = useAppContext();
+    const { isLoggedIn, isAdmin } = useAppContext();
     const [selectedEntity, setSelectedEntity] = useState("Hotel"); // Default selection
 
     // // Function to handle some admin action
@@ -23,7 +23,7 @@ const Admin =()=>{
         return <div>You must be logged in to access this page.</div>;
     }
 
-    if (!isOwner) {
+    if (!isAdmin) {
         return <div>You do not have permission to access this page.</div>;
     }
 

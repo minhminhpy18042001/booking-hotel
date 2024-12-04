@@ -3,6 +3,7 @@ import User from "../models/user";
 import jwt from "jsonwebtoken";
 import { check, validationResult } from "express-validator";
 import verifyToken from "../middleware/auth";
+import verifyRole from "../middleware/verifyRole";
 const router =express.Router();
 router.get("/me",verifyToken as any,async(req:Request,res: Response): Promise<any>=>{
     const userId =req.userId;
@@ -61,8 +62,8 @@ router.post("/register",[
 });
 router.get("/getUsers",verifyToken as any,async(req:Request,res: Response): Promise<any>=>{
     try {
-        const users =await User.find().select("-password");
-        if(!users){
+        const users =await User.find({ role: { $ne: 'admin' } }).select("-password");
+        if(!users|| users.length === 0){
             return res.status(400).json({message:"User not found"});
         }
         res.json(users);
@@ -70,5 +71,26 @@ router.get("/getUsers",verifyToken as any,async(req:Request,res: Response): Prom
         console.log(error);
         res.status(500).send({message:"Something went wrong"})
     }
+})
+router.put("/updateRole/:userId/:role",
+    verifyToken as any,verifyRole(['admin']),async(req:Request,res:Response):Promise<any>=>{
+        try {
+            const userId =req.params.userId;
+            const role =req.params.role;
+            console.log(userId,role)
+            let user =await User.findOneAndUpdate(
+                {_id:userId},
+                {$set:{role:role}},
+                { new: true } 
+            )
+            if(!user){
+                return res.status(404).json({message:"User not found"});
+              }
+            await user.save();
+            res.status(201).json(user);
+        } catch (error) {
+            console.log(error);
+        res.status(500).send({message:"Something went wrong"})
+        }
 })
 export default router;
