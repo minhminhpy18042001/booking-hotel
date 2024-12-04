@@ -286,3 +286,12 @@ export const fetchReviewById= async(bookingId:string):Promise<BookingType>=>{
   }
   return response.json();
 }
+export const fetchUsers =async():Promise<UserType[]> =>{
+  const response = await fetch(`${API_BASE_URL}/api/users/getUsers`,{
+    credentials:"include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching Users");
+  }
+  return response.json();
+}

@@ -15,6 +15,8 @@ import EditRoom from "./pages/EditRoom";
 import Home from "./pages/Home";
 import AddReview from "./pages/AddReview";
 import EditReview from "./pages/EditReview";
+import LayoutAdmin from "./layouts/LayoutAdmin";
+import Admin from "./pages/Admin";
 
 
 
@@ -29,6 +31,9 @@ const App =()=>{
         <Route path="/search" element={<Layout>
           <Search/>
         </Layout>}/>
+        <Route path="/admin" element={<LayoutAdmin>
+          <Admin/>
+        </LayoutAdmin>}/>
         <Route path="/detail/:hotelId" element={<Layout>
           <Detail/>
         </Layout>}/>

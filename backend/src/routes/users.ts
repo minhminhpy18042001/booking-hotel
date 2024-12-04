@@ -59,5 +59,16 @@ router.post("/register",[
         res.status(500).send({message:"Something went wrong"})
     }
 });
-
+router.get("/getUsers",verifyToken as any,async(req:Request,res: Response): Promise<any>=>{
+    try {
+        const users =await User.find().select("-password");
+        if(!users){
+            return res.status(400).json({message:"User not found"});
+        }
+        res.json(users);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({message:"Something went wrong"})
+    }
+})
 export default router;

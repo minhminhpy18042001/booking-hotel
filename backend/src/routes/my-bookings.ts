@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/", verifyToken as any, async (req: Request, res: Response) => {
     try {
         const hotels = await Hotel.find({
-            bookings: { $elemMatch: { userId: req.userId,statusBooking:"booking" } },
+            bookings: { $elemMatch: { userId: req.userId } },
         });
 
         const results = hotels.map((hotel) => {
