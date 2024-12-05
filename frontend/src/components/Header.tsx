@@ -15,6 +15,7 @@ const Header =()=>{
                         <Link className="flex items-center text-white px-3 font-bold hover:bg-blue-600" to ="/my-bookings">My Bookings</Link>
                         {isOwner &&<>
                         <Link className="flex items-center text-white px-3 font-bold hover:bg-blue-600" to ="/my-hotels">My Hotels</Link>
+                        <Link className="flex items-center text-white px-3 font-bold hover:bg-blue-600" to ="/my-guests">My Guests</Link>
                         </>}
                         {/* <Link className="flex items-center text-white px-3 font-bold hover:bg-blue-600" to ="/my-hotels">My Hotels</Link>            */}
                         <SignOutButton/>

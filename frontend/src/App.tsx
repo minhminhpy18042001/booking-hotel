@@ -17,6 +17,7 @@ import AddReview from "./pages/AddReview";
 import EditReview from "./pages/EditReview";
 import LayoutAdmin from "./layouts/LayoutAdmin";
 import Admin from "./pages/Admin";
+import MyGuests from "./pages/MyGuests";
 
 
 
@@ -73,6 +74,11 @@ const App =()=>{
          <Route path ="/my-hotels" element={
           <Layout>
             <MyHotels/> 
+          </Layout>
+        }/>
+        <Route path ="/my-guests" element={
+          <Layout>
+            <MyGuests/> 
           </Layout>
         }/>
         <Route path ="/my-bookings" element={
