@@ -59,10 +59,12 @@ router.post(
         {
           return res.status(400).json({message:"Change checkOut date"})
         }
+        const today =new Date()
       const hotel = await Hotel.findOneAndUpdate(
         { _id: req.params.hotelId },
         {
           $push: { bookings: newBooking },
+          lastUpdated:today,
         }
       );
 

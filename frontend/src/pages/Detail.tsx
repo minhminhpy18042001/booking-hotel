@@ -8,6 +8,7 @@ import { BiMoney } from "react-icons/bi";
 import { useAppContext } from "../contexts/AppContext";
 import { useState } from "react";
 import RoomDetail from "../forms/DetailsForm/RoomDetail";
+import avatar from '../images/avatar.png';
 const Detail = () => {
     const { hotelId } = useParams();
     const [selectedRoom, setSelectedRoom] = useState("");
@@ -117,8 +118,8 @@ const Detail = () => {
                     <div className="border border-slate-300 rounded-lg shadow-lg p-4 bg-white flex items-start">
                         {/* Avatar */}
                         <img
-                            src={`https://avatar.iran.liara.run/public/13`} 
-                            alt={`${booking.firstName} ${booking.lastName}`} 
+                            src={avatar} 
+                            alt="User  Avatar"  
                             className="w-16 h-16 rounded-full border-2 border-gray-300 shadow-md mr-4"
                         />
                         <div className="flex-1">

@@ -9,24 +9,62 @@ const router = express.Router();
 
 router.get("/", verifyToken as any, async (req: Request, res: Response) => {
     try {
-        const hotels = await Hotel.find({
-            bookings: { $elemMatch: { userId: req.userId } },
-        });
+        const hotels = await Hotel.aggregate([
+            {
+                $match: {
+                    bookings: { $elemMatch: { userId: req.userId } } // Match hotels with user bookings
+                }
+            },
+            {
+                $unwind: "$bookings" // Unwind the bookings array
+            },
+            {
+                $match: {
+                    "bookings.userId": req.userId // Filter to only include bookings for the current user
+                }
+            },
+            {
+                $sort: { "bookings.checkIn": -1} // Sort by checkout date (ascending)
+            },
+            {
+                $group: {
+                    _id: "$_id", // Group back to hotel level
+                    userId:{$first:"$userId"},
+                    name: { $first: "$name" }, // Include other hotel fields as needed
+                    city: { $first: "$city" },
+                    country:{$first:"$country"},
+                    description:{$first:"$description"},
+                    type:{$first:"$type"},
+                    adultCount:{$first:"$adultCount"},
+                    childCount:{$first:"$childCount"},
+                    facilities:{$first:"$facilities"},
+                    pricePerNight:{$first:"$pricePerNight"},
+                    starRating:{$first:"$starRating"},
+                    imageUrls:{$first:"$imageUrls"},
+                    lastUpdated:{$first:"$lastUpdated"},
+                    rooms:{$first:"$rooms"},
+                    bookings: { $push: "$bookings" } // Collect bookings back into an array
+                    // Add other fields you want to include
+                }
+            },
+            {
+                $sort: { "name": 1 } // Sort the final output by hotel name (or any other field)
+            }
+        ]);
+        // const results = hotels.map((hotel) => {
+        //     const userBookings = hotel.bookings.filter(
+        //         (booking) => booking.userId === req.userId
+        //     );
 
-        const results = hotels.map((hotel) => {
-            const userBookings = hotel.bookings.filter(
-                (booking) => booking.userId === req.userId
-            );
+        //     const hotelWithUserBookings: HotelType = {
+        //         ...hotel.toObject(),
+        //         bookings: userBookings,
+        //     };
 
-            const hotelWithUserBookings: HotelType = {
-                ...hotel.toObject(),
-                bookings: userBookings,
-            };
+        //     return hotelWithUserBookings;
+        // });
 
-            return hotelWithUserBookings;
-        });
-
-        res.status(200).send(results);
+        res.status(200).send(hotels);
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Unable to fetch bookings" });

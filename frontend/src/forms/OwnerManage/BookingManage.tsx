@@ -16,6 +16,7 @@ const BookingManage =() => {
                     <tr>
                         <th>Hotel</th>
                         <th>Email</th>
+                        <th>Name</th>
                         <th>Guest</th>
                         <th>CheckIn/CheckOut</th>
                         <th>Total cost</th>
@@ -29,6 +30,7 @@ const BookingManage =() => {
                             <tr key={booking._id}>
                                 <td>{hotel.name} </td>
                                 <td>{booking.email}</td>
+                                <td>{booking.firstName} {booking.lastName}</td>
                                 <td>{booking.adultCount} adult {booking.childCount} children</td>
                                 <td >{new Date(booking.checkIn).toLocaleDateString()}{" To "} {new Date(booking.checkOut).toLocaleDateString()}</td>
                                 <td>{booking.totalCost}$</td>

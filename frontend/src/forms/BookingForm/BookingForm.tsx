@@ -65,8 +65,6 @@ const BookingForm =({ currentUser,totalCost}: Props)=>{
                     <input
                         className="mt-1 border rounded w-full py-2 px-3 text-gray-700 bg-gray-200 font-normal"
                         type="text"
-                        readOnly
-                        disabled
                         {...register("firstName")}
                     />
                 </label>
@@ -75,8 +73,6 @@ const BookingForm =({ currentUser,totalCost}: Props)=>{
                     <input
                         className="mt-1 border rounded w-full py-2 px-3 text-gray-700 bg-gray-200 font-normal"
                         type="text"
-                        readOnly
-                        disabled
                         {...register("lastName")}
                     />
                 </label>
