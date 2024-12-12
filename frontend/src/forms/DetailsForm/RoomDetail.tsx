@@ -12,7 +12,9 @@ const RoomDetail = ({roomId,hotelId,onClose}:Props) => {
     return (room&&
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white rounded-lg p-8 max-w-2xl w-full">
+            <div className="flex justify-end mb-4"> 
                 <button onClick={()=>onClose(false)}>x</button>
+                </div>
                 <h2 className="text-2xl font-bold mb-6">{room.name}</h2>
                 <div className="text-lg font-normal text-gray-700 mb-6">
                     <strong>Size:</strong> {room.roomSize} m<sup>2</sup><br />
@@ -28,9 +30,11 @@ const RoomDetail = ({roomId,hotelId,onClose}:Props) => {
                     ))}
                 </div>
             </div>
+            <div className="flex justify-end">
                 <button onClick={()=>onClose(false)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
                     Close
                 </button>
+                </div>
             </div>
         </div>
     );

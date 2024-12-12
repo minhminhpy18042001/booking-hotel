@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { Link, useParams } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import * as apiClient from "../api-client";
 import { AiFillStar } from "react-icons/ai";
 import { FiMaximize2 } from "react-icons/fi";
@@ -15,6 +15,8 @@ const Detail = () => {
     const [openModal,setOpenModal]=useState(false);
     const { data: hotel } = useQuery("fetchHotelById", () => apiClient.fetchHotelById(hotelId as string), { enabled: !!hotelId, });
     const {isLoggedIn}=useAppContext();
+    const navigate =useNavigate();
+    const location =useLocation();
     const handleRoomClick = (roomId:string) => {
         setSelectedRoom(roomId);
     };
@@ -79,25 +81,29 @@ const Detail = () => {
                     {hotel.rooms.map((room) => (
                         <div className="border border-slate-300 rounded-lg shadow-md p-4 bg-white flex flex-col">
                             <div className="flex justify-between items-center mb-2">
-                                <div className="text-xl font-bold text-blue-400 underline hover:text-red-900"
-                                 onClick={() =>{ handleRoomClick(room._id);setOpenModal(true)}}>
-                                    {room.name}</div>
+                                <button className="text-xl font-bold text-blue-400 underline hover:text-red-900"
+                                    onClick={() => { handleRoomClick(room._id); setOpenModal(true) }}>
+                                    {room.name}
+                                </button>
                                 {isLoggedIn ? (
-                                    <Link to={`/hotel/${hotelId}/booking/${room._id}`} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500">
+                                    <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500"
+                                        onClick={() => navigate(`/hotel/${hotelId}/booking/${room._id}`)}>
                                         Reserve
-                                    </Link>
+                                    </button>
                                 ) : (
-                                    <Link to={`/sign-in`} className="text-blue-400 underline hover:text-red-900">Login to Book</Link>
+                                    <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500"
+                                        onClick={() => navigate("/sign-in", { state: { from: location } })}>
+                                        Login to Book
+                                    </button>
                                 )}
                             </div>
                             <div className="flex-1">
                                 <div className="text-lg font-normal text-gray-700">
-                                    <FiMaximize2 className="inline mr-1" />
-                                    {room.roomSize} m<sup>2</sup> |
+                                    {/* <FiMaximize2 className="inline mr-1" />
+                                    {room.roomSize} m<sup>2</sup>
                                     <BiMoney className="inline mr-1" />
-                                    {room.pricePerNight} $ |
-                                    <FaBed className="inline mr-1" />
-                                    {room.typeBed}
+                                    {room.pricePerNight} $  */}
+                                    {room.typeBed} {<FaBed className="inline mr-1" />}
                                 </div>
                             </div>
                         </div>
