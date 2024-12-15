@@ -16,6 +16,15 @@ export const fetchCurrentUser = async (): Promise<UserType> => {
   }
   return response.json();
 };
+export const fetchUserById =async(id:string):Promise<UserType>=>{
+  const response = await fetch(`${API_BASE_URL}/api/users/${id}`, {
+    credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error("Error fetching user");
+    }
+    return response.json();
+}
 export const register = async (formData: RegisterFormData) => {
     const response = await fetch(`${API_BASE_URL}/api/users/register`, {
       method: "POST",

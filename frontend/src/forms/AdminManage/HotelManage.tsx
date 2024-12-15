@@ -5,9 +5,12 @@ import styles from "./../../css/HotelManage.module.css"
 
 const HotelManage =() => {
     const {data: hotels}=useQuery("fetchHotels",()=>apiClient.fetchHotels());
-    if(!hotels){
+    
+    const {data: users}=useQuery("fetchUsers",()=>apiClient.fetchUsers());
+    if(!hotels||!users){
         return <div>No Hotel found...</div>;
     }
+    const userMap = users ? Object.fromEntries(users.map(user => [user._id, user])) : {};
     return (
         <div className={styles.container}>
             <h2>Hotel Management</h2>
@@ -15,7 +18,7 @@ const HotelManage =() => {
                 <thead>
                     <tr>
                         <th>Index</th>
-                        <th>User Id</th>
+                        <th>Owner Email</th>
                         <th>Name</th>
                         <th>City</th>
                         <th>County</th>
@@ -24,20 +27,19 @@ const HotelManage =() => {
                     </tr>
                 </thead>
                 <tbody>
-                    {hotels.map((hotel,index) => (
-                        
-                        
-                        <tr key={hotel._id}>
-                            <td>{index + 1}</td>
-                            <td>{hotel.userId}</td>
-                            <td>{hotel.name}</td>
-                            <td>{hotel.city}</td>
-                            <td>{hotel.country}</td>
-                            <td>{'★'.repeat(Math.round(hotel.starRating))}</td>
-                            {/* <td>{hotel.rooms}</td>
-                            <td>{hotel.rating}</td> */}
-                        </tr>
-                    ))}
+                    {hotels.map((hotel, index) => {
+                        const user = userMap[hotel.userId]; // Lookup user by userId
+                        return (
+                            <tr key={hotel._id}>
+                                <td>{index + 1}</td>
+                                <td>{user ? user.email : 'Loading...'}</td> {/* Display user email */}
+                                <td>{hotel.name}</td>
+                                <td>{hotel.city}</td>
+                                <td>{hotel.country}</td>
+                                <td>{'★'.repeat(Math.round(hotel.starRating))}</td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>

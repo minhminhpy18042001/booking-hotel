@@ -1,10 +1,8 @@
 import { useQuery } from "react-query";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import * as apiClient from "../api-client";
 import { AiFillStar } from "react-icons/ai";
-import { FiMaximize2 } from "react-icons/fi";
 import { FaBed } from "react-icons/fa6";
-import { BiMoney } from "react-icons/bi";
 import { useAppContext } from "../contexts/AppContext";
 import { useState } from "react";
 import RoomDetail from "../forms/DetailsForm/RoomDetail";
