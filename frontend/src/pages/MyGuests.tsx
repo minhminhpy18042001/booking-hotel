@@ -9,11 +9,9 @@ const MyGuests =()=>{
     if (!isLoggedIn) {
         return <div>You must be logged in to access this page.</div>;
     }
-
     if (!isOwner) {
         return <div>You do not have permission to access this page.</div>;
     }
-
     return (
         <div style={{ display: "flex", fontFamily: "Arial, sans-serif", backgroundColor: "#f9f9f9", height: "100vh" }}>
     {/* Sidebar */}
