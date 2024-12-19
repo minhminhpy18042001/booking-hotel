@@ -18,6 +18,7 @@ import EditReview from "./pages/EditReview";
 import LayoutAdmin from "./layouts/LayoutAdmin";
 import Admin from "./pages/Admin";
 import MyGuests from "./pages/MyGuests";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 
@@ -43,6 +44,9 @@ const App =()=>{
         </Layout>}/>
         <Route path="/sign-in" element ={<Layout>
           <SignIn />
+        </Layout>}/>
+        <Route path="/forgot-password" element ={<Layout>
+          <ForgotPassword />
         </Layout>}/>
         {isLoggedIn &&<>
         <Route path ="/hotel/:hotelId/booking/:roomId" element={

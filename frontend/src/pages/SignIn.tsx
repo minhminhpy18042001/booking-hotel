@@ -75,12 +75,17 @@ const SignIn = () => {
             Create an account here
           </Link>
         </span>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-xl"
-        >
-          Login
-        </button>
+        <div className="flex items-center">
+    <Link className="text-sm underline mr-4" to="/forgot-password">
+      Forgot Password?
+    </Link>
+    <button
+      type="submit"
+      className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-xl"
+    >
+      Login
+    </button>
+  </div>
       </span>
     </form>
   );

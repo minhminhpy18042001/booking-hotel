@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { check, validationResult } from "express-validator";
 import verifyToken from "../middleware/auth";
 import verifyRole from "../middleware/verifyRole";
+var nodemailer = require('nodemailer');
 const router =express.Router();
 router.get("/me",verifyToken as any,async(req:Request,res: Response): Promise<any>=>{
     const userId =req.userId;
@@ -90,7 +91,48 @@ router.put("/updateRole/:userId/:role",
             res.status(201).json(user);
         } catch (error) {
             console.log(error);
-        res.status(500).send({message:"Something went wrong"})
+            res.status(500).send({ message: "Something went wrong" })
         }
+})
+router.post("/forgot-password",async(req:Request,res: Response):Promise<any> =>{
+    try {
+        const {email} = req.body;
+        const user =User.findOne({email:email})
+        .then(user=>{
+        if(!user){
+            return res.status(404).json({message:"User not found"});
+        }
+            const token = jwt.sign({ userId: user._id }, "jwt_secret_key", { expiresIn: "1d" })
+
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: 'njs649404@gmail.com',
+                    pass: 'cwph zowu thao azfm'
+                }
+            });
+
+            var mailOptions = {
+                from: 'njs649404@gmail.com',
+                to: email,
+                subject: 'Reset your password',
+                text: `${process.env.FRONTEND_URL}/reset-password/${user._id}/${token}`
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    return res.status(200);
+                }
+            });
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Something went wrong" })
+    }
 })
 export default router;

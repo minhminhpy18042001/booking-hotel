@@ -107,7 +107,7 @@ router.get("/:id",[param("id").notEmpty().withMessage("Hotel ID is required")],
       res.cookie("recentlyWatched", JSON.stringify(recentlyWatched), {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        maxAge: 1 * 24 * 60 * 60 * 1000,
+        maxAge: 3 * 24 * 60 * 60 * 1000,
       });
       res.json(hotel);
     } catch (error) {

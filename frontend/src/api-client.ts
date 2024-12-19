@@ -316,3 +316,16 @@ export const updateUserRole =async(formData:UpdateUserFormData)=>{
 
     return response.json();
 }
+export const sendPasswordResetLink = async (email: string): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/api/users/forgot-password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to send password reset link');
+  }
+};
