@@ -5,6 +5,7 @@ import { check, validationResult } from "express-validator";
 import verifyToken from "../middleware/auth";
 import verifyRole from "../middleware/verifyRole";
 var nodemailer = require('nodemailer');
+import bcrypt from "bcryptjs"
 const router =express.Router();
 router.get("/me",verifyToken as any,async(req:Request,res: Response): Promise<any>=>{
     const userId =req.userId;
@@ -129,6 +130,27 @@ router.post("/forgot-password",async(req:Request,res: Response):Promise<any> =>{
                     return res.status(200);
                 }
             });
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Something went wrong" })
+    }
+})
+router.post("/reset-password/:userId/:token",async(req:Request,res: Response):Promise<any> =>{
+    try {
+        const{userId,token}=req.params
+        const password =req.body.password;
+        jwt.verify(token,"jwt_secret_key",(err,decoded)=>{
+            if(err){
+                return res.status(401).json({message:"Invalid token"})
+            }
+            bcrypt.hash(password,8)
+            .then(hash=>{
+                User.findOneAndUpdate({_id:userId},{password:hash})
+                .then(user=>{res.status(200).send({ message: "Update password success" })})
+                .catch(err=>res.status(500).send({ message: "Something went wrong" }))
+            })
+            .catch(err=>res.status(500).send({ message: "Something went wrong" }))
         })
     } catch (error) {
         console.log(error);

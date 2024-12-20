@@ -19,6 +19,7 @@ import LayoutAdmin from "./layouts/LayoutAdmin";
 import Admin from "./pages/Admin";
 import MyGuests from "./pages/MyGuests";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 
 
@@ -47,6 +48,9 @@ const App =()=>{
         </Layout>}/>
         <Route path="/forgot-password" element ={<Layout>
           <ForgotPassword />
+        </Layout>}/>
+        <Route path="/reset-password/:userId/:token" element ={<Layout>
+          <ResetPassword />
         </Layout>}/>
         {isLoggedIn &&<>
         <Route path ="/hotel/:hotelId/booking/:roomId" element={
