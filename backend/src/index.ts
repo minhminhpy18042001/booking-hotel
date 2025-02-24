@@ -26,7 +26,7 @@ cron.schedule('0 * * * *', async () => {
 
         for (const hotel of hotels) {
             const updatedBookings = hotel.bookings.map((booking) => {
-                if (new Date(booking.checkOut) < currentDate && booking.statusBooking === 'booking') {
+                if (new Date(booking.checkOut) < currentDate && booking.statusBooking === 'booked') {
                     booking.statusBooking = 'completed'; // Update the 
                     console.log(booking._id)
                 }

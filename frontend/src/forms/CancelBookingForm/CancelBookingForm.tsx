@@ -70,9 +70,10 @@ const CancelBookingForm =({booking}: Props)=>{
                     (<button className="w-[300px] bg-yellow-600 text-white h-full p-2 font-bold text-xl hover:bg-yeloow-500">
                         Edit Review
                     </button>)
-                    ) : <button className="w-[300px] bg-red-600 text-white h-full p-2 font-bold text-xl hover:bg-red-500">
+                    ) : (booking.statusBooking==="booked"?
+                    <button className="w-[300px] bg-red-600 text-white h-full p-2 font-bold text-xl hover:bg-red-500">
                         Cancel
-                    </button>}
+                    </button>:null)}
                 {/* <button  className="w-[300px] bg-red-600 text-white h-full p-2 font-bold text-xl hover:bg-red-500">
                     Cancel
                 </button> */}

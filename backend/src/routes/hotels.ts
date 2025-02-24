@@ -53,7 +53,7 @@ router.post(
       const newBooking: BookingType = {
         ...req.body,
         userId: req.userId,
-        statusBooking:"booking",
+        statusBooking:"booked",
       };
       if (newBooking.totalCost ===0)
         {
@@ -122,7 +122,6 @@ router.get("/:hotelId/:roomId", verifyToken as any, async (req: Request, res: Re
   try {
     const hotel = await Hotel.findOne({
       _id: id,
-      userId: req.userId,
     });
     if(!hotel){
       return res.status(404).json({message:"Hotel not found"});
@@ -148,6 +147,7 @@ const constructSearchQuery = (queryParams: any) => {
     constructedQuery.$or = [
       { city: new RegExp(queryParams.destination, "i") },
       { country: new RegExp(queryParams.destination, "i") },
+      {name:new RegExp(queryParams.destination, "i")},
     ];
   }
 

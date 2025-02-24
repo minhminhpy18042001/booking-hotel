@@ -100,21 +100,18 @@ router.put("/:bookingId",verifyToken as any,async (req: Request, res: Response):
         const today =new Date()
         const before =booking.checkIn.getTime() >= today.getTime()
         const nights =Math.abs(booking.checkIn.getTime()-today.getTime())/(1000*60*60*24);
+        console.log(nights,before)
         if (nights<3 || !before){return res.status(404).json({ message: "Only can be cancelled before 3 days"})}
         const hotel = await Hotel.findOneAndUpdate({
             bookings: { $elemMatch: { _id: bookingId, } },
         },
-        {
-            $pull:{ bookings:{_id:bookingId}}
-        },
-        // {
-        //     arrayFilters:[{bookings:{_id:req.params.bookingId}}]
-        // }
+        { $set: { "bookings.$.statusBooking": "cancelled" } }, // Update the booking status to "Cancelled"
+        { new: true }
         );
         if (!hotel) {
             return res.status(404).json({ message: "Hotel not found" });
         }
-        await hotel.save();
+        //await hotel.save();
         res.status(201).json(hotel);
     } catch (error) {
         res.status(500).json({ message: "Something went wrong" });
