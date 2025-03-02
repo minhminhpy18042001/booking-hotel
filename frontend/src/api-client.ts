@@ -192,6 +192,30 @@ export const fetchHotels = async (): Promise<HotelType[]> => {
   }
   return response.json();
 };
+export const fetchPendingHotels = async (): Promise<HotelType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/hotels/pending`);
+  if (!response.ok) {
+    throw new Error("Error fetching hotels");
+  }
+  return response.json();
+};
+export const fetchApprovedHotels = async (): Promise<HotelType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/hotels/approved`);
+  if (!response.ok) {
+    throw new Error("Error fetching hotels");
+  }
+  return response.json();
+};
+export const approveHotel = async (hotelId: string): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/api/hotels/approve/${hotelId}`, {
+      method: 'PUT',
+      credentials:"include",
+  });
+
+  if (!response.ok) {
+      throw new Error('Failed to approve hotel');
+  }
+};
 export const fetchRecentlyWatchedHotels = async () => {
   const response = await fetch(`${API_BASE_URL}/api/hotels/recently-watched`, {
     credentials: 'include',
@@ -345,3 +369,4 @@ export const sendPasswordResetLink = async (email: string): Promise<void> => {
     throw new Error('Failed to send password reset link');
   }
 };
+

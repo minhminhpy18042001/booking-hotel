@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useAppContext } from "../contexts/AppContext";
 import './../css/Admin.module.css';
-import HotelManage from "../forms/AdminManage/HotelManage";
+import HotelApprovedManage from "../forms/AdminManage/HotelApprovedManage";
 import UserManage from "../forms/AdminManage/UserManage";
 import BookingManage from "../forms/AdminManage/BookingManage";
+import HotelPendingManage from "../forms/AdminManage/HotelPendingManage";
 const Admin =()=>{
     const { isLoggedIn, isAdmin } = useAppContext();
     const [selectedEntity, setSelectedEntity] = useState("Hotel"); // Default selection
+    const [expandedHotelSection, setExpandedHotelSection] = useState("Pending");
 
     // // Function to handle some admin action
     // const handleAdminAction = () => {
@@ -37,6 +39,18 @@ const Admin =()=>{
                 style={{ cursor: "pointer", padding: "12px", borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: selectedEntity === "Hotel" ? "#e0e0e0" : "transparent"}}>
                 Hotel
             </li>
+            {selectedEntity === "Hotel" && (
+            <>
+              <li onClick={() => setExpandedHotelSection("Approved")}
+                style={{ cursor: "pointer", padding: "12px",margin: 15, borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: expandedHotelSection === "Approved" ? "#e0e0e0" : "transparent" }}>
+                Approved Hotels
+              </li>
+              <li onClick={() => setExpandedHotelSection("Pending")}
+                style={{ cursor: "pointer", padding: "12px",margin: 15, borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: expandedHotelSection === "Pending" ? "#e0e0e0" : "transparent" }}>
+                Pending Hotels
+              </li>
+            </>
+          )}
             <li onClick={() => setSelectedEntity("User")} 
                 style={{ cursor: "pointer", padding: "12px", borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: selectedEntity === "User " ? "#e0e0e0" : "transparent" }}>
                 User
@@ -51,8 +65,13 @@ const Admin =()=>{
     {/* Main Content Area */}
     <div style={{ flex: 1, padding: "20px", backgroundColor: "#fff" }}>
         <h1 style={{ color: "#333" }}>Admin Page</h1>
-        <h2 style={{ color: "#555" }}>Selected Entity: <span style={{ fontWeight: "bold" }}>{selectedEntity}</span></h2>
-        {selectedEntity==="Hotel"&&<HotelManage></HotelManage>}
+        {/* <h2 style={{ color: "#555" }}>Selected Entity: <span style={{ fontWeight: "bold" }}>{selectedEntity}</span></h2> */}
+        {selectedEntity === "Hotel" && (
+          <>
+            {expandedHotelSection === "Approved" && <HotelApprovedManage />}
+            {expandedHotelSection === "Pending" && <HotelPendingManage/>}
+          </>
+        )}
         {selectedEntity==="User"&&<UserManage></UserManage>}
         {selectedEntity==="Booking"&&<BookingManage></BookingManage>}
         {/* You can add more admin functionalities or display data based on selectedEntity */}

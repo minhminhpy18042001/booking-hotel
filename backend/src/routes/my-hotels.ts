@@ -45,7 +45,7 @@ router.post(
       newHotel.imageUrls = imageUrls;
       newHotel.lastUpdated = new Date();
       newHotel.userId = req.userId;
-
+      newHotel.statusHotel = "pending";
       const hotel = new Hotel(newHotel);
       await hotel.save();
 

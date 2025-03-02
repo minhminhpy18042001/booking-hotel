@@ -1,16 +1,27 @@
 // HotelManage.tsx
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import * as apiClient from "../../api-client";
 import styles from "./../../css/HotelManage.module.css"
 
-const HotelManage =() => {
-    const {data: hotels}=useQuery("fetchHotels",()=>apiClient.fetchHotels());
-    
+
+const HotelPendingManage =() => {
+    const queryClient = useQueryClient();
+    const {data: hotels} = useQuery("fetchPendingHotels",()=>apiClient.fetchPendingHotels());
+
     const {data: users}=useQuery("fetchUsers",()=>apiClient.fetchUsers());
     if(!hotels||!users){
         return <div>No Hotel found...</div>;
     }
     const userMap = users ? Object.fromEntries(users.map(user => [user._id, user])) : {};
+    const handleApproveHotel = async (hotelId: string) => {
+        try {
+            await apiClient.approveHotel(hotelId);
+            // Refresh the hotels data
+            queryClient.invalidateQueries("fetchPendingHotels");
+        } catch (error) {
+            console.error(error);
+        }
+    };
     return (
         <div className={styles.container}>
             <h2>Hotel Management</h2>
@@ -23,7 +34,7 @@ const HotelManage =() => {
                         <th>City</th>
                         <th>County</th>
                         <th>Rating</th>
-
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,6 +48,10 @@ const HotelManage =() => {
                                 <td>{hotel.city}</td>
                                 <td>{hotel.country}</td>
                                 <td>{'★'.repeat(Math.round(hotel.starRating))}</td>
+                                <td>
+                            <button onClick={() => handleApproveHotel(hotel._id)}>Approve</button>
+                        </td>
+
                             </tr>
                         );
                     })}
@@ -46,4 +61,5 @@ const HotelManage =() => {
     );
 };
 
-export default HotelManage
+export default HotelPendingManage
+

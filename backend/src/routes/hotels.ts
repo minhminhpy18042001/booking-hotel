@@ -89,6 +89,38 @@ router.get("/", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching hotels" });
   }
 });
+router.get("/approved", async (req: Request, res: Response) => {
+  try {
+    const hotels = await Hotel.find({ statusHotel: { $ne: "pending" } }).sort("-lastUpdated");
+    res.json(hotels);
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Error fetching hotels" });
+  }
+});
+router.put("/approve/:id", async (req: Request, res: Response): Promise<any> => {
+  try {
+    const hotel = await Hotel.findByIdAndUpdate(req.params.id, {
+      statusHotel: "approved",
+    });
+    if (!hotel) {
+      return res.status(404).json({ message: "Hotel not found" });
+    }
+    res.status(200).send();
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error approving hotel" });
+  }
+});
+router.get("/pending", async (req: Request, res: Response) => {
+  try {
+    const hotels = await Hotel.find({ statusHotel: "pending" }).sort("-lastUpdated");
+    res.json(hotels);
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Error fetching hotels" });
+  }
+});
 router.get("/:id",[param("id").notEmpty().withMessage("Hotel ID is required")],
   async (req: Request, res: Response): Promise<any>  => {
     const errors = validationResult(req);
@@ -192,6 +224,7 @@ const constructSearchQuery = (queryParams: any) => {
       $lte: parseInt(queryParams.maxPrice).toString(),
     };
   }
+  constructedQuery.statusHotel = { $ne: "pending" };
 
   return constructedQuery;
 };
