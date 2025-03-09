@@ -369,4 +369,39 @@ export const sendPasswordResetLink = async (email: string): Promise<void> => {
     throw new Error('Failed to send password reset link');
   }
 };
-
+export const fetchRevenue =async()=>{
+  const response = await fetch(`${API_BASE_URL}/api/revenue`,{
+    credentials:"include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching Revenue");
+  }
+  return response.json();
+}
+export const fetchRevenueHotel =async(hotelId:string)=>{
+  const response = await fetch(`${API_BASE_URL}/api/revenue/${hotelId}`,{
+    credentials:"include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching Revenue");
+  }
+  return response.json();
+}
+export const fetchRevenueByDateRange =async(startDate:string,endDate:string)=>{
+  const response = await fetch(`${API_BASE_URL}/api/revenue/hotels/by-date-range?startDate=${startDate}&endDate=${endDate}`,{
+    credentials:"include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching Revenue");
+  }
+  return response.json();
+}
+export const fetchRevenueByHotelIdAndDateRange =async(hotelId:string,startDate:string,endDate:string)=>{  
+  const response = await fetch(`${API_BASE_URL}/api/revenue/hotels/${hotelId}/by-date-range?startDate=${startDate}&endDate=${endDate}`,{
+    credentials:"include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching Revenue");
+  }
+  return response.json();
+}

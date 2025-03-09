@@ -49,7 +49,7 @@ const HotelPendingManage =() => {
                                 <td>{hotel.country}</td>
                                 <td>{'★'.repeat(Math.round(hotel.starRating))}</td>
                                 <td>
-                            <button onClick={() => handleApproveHotel(hotel._id)}>Approve</button>
+                            <button className={styles.approveButton} onClick={() => handleApproveHotel(hotel._id)}>Approve</button>
                         </td>
 
                             </tr>

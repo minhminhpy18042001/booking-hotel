@@ -15,7 +15,8 @@ h2 {
     border-collapse: collapse;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     border: 1px solid #ccc;
     padding: 12px;
     text-align: left;
@@ -36,4 +37,44 @@ h2 {
 
 .table td {
     transition: background-color 0.3s;
+}
+
+.approveButton {
+    background-color: #4CAF50;
+    /* Green */
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.approveButton:hover {
+    background-color: #3e8e41;
+    /* Darker green on hover */
+}
+
+.filter {
+    margin-bottom: 20px;
+}
+
+.filter label {
+    margin-right: 10px;
+}
+
+.filter input[type="date"] {
+    margin-right: 10px;
+}
+
+.filter button {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filter button:hover {
+    background-color: #3e8e41;
 }

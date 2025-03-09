@@ -5,9 +5,10 @@ import HotelApprovedManage from "../forms/AdminManage/HotelApprovedManage";
 import UserManage from "../forms/AdminManage/UserManage";
 import BookingManage from "../forms/AdminManage/BookingManage";
 import HotelPendingManage from "../forms/AdminManage/HotelPendingManage";
+import RevenueManage from "../forms/AdminManage/RevenueManage";
 const Admin =()=>{
     const { isLoggedIn, isAdmin } = useAppContext();
-    const [selectedEntity, setSelectedEntity] = useState("Hotel"); // Default selection
+    const [selectedEntity, setSelectedEntity] = useState("Revenue"); // Default selection
     const [expandedHotelSection, setExpandedHotelSection] = useState("Pending");
 
     // // Function to handle some admin action
@@ -35,6 +36,10 @@ const Admin =()=>{
     <div style={{ width: "250px", borderRight: "1px solid #ccc", padding: "20px", backgroundColor: "#fff" }}>
         <h3 style={{ color: "#333", marginBottom: "20px" }}>Watch Entities</h3>
         <ul style={{ listStyleType: "none", padding: "0" }}>
+            <li onClick={() => setSelectedEntity("Revenue")}
+              style={{ cursor: "pointer", padding: "12px", borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: selectedEntity === "Revenue" ? "#e0e0e0" : "transparent" }}>
+              Revenue
+            </li>
             <li onClick={() => setSelectedEntity("Hotel")} 
                 style={{ cursor: "pointer", padding: "12px", borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: selectedEntity === "Hotel" ? "#e0e0e0" : "transparent"}}>
                 Hotel
@@ -59,6 +64,7 @@ const Admin =()=>{
                 style={{ cursor: "pointer", padding: "12px", borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: selectedEntity === "Booking" ? "#e0e0e0" : "transparent" }}>
                 Booking
             </li>
+
         </ul>
     </div>
 
@@ -74,6 +80,7 @@ const Admin =()=>{
         )}
         {selectedEntity==="User"&&<UserManage></UserManage>}
         {selectedEntity==="Booking"&&<BookingManage></BookingManage>}
+        {selectedEntity==="Revenue"&&<RevenueManage></RevenueManage>}
         {/* You can add more admin functionalities or display data based on selectedEntity */}
 
     </div>

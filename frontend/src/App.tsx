@@ -20,6 +20,8 @@ import Admin from "./pages/Admin";
 import MyGuests from "./pages/MyGuests";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import RevenueManage from "./forms/AdminManage/RevenueManage";
+import RevenuePage from "./pages/RevenuePage";
 
 
 
@@ -56,6 +58,16 @@ const App =()=>{
         <Route path ="/hotel/:hotelId/booking/:roomId" element={
           <Layout>
             <Booking/> 
+          </Layout>
+        }/>
+        <Route path="/revenue" element={
+          <Layout>
+            <RevenueManage/>
+          </Layout>
+        }/>
+        <Route path="/revenue/:id/:startDate/:endDate" element={
+          <Layout>
+            <RevenuePage/>
           </Layout>
         }/>
         <Route path ="/add-hotel" element={

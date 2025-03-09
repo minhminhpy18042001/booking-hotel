@@ -11,6 +11,7 @@ import hotelsRoutes from "./routes/hotels";
 import bookingRoutes from "./routes/my-bookings";
 import cron from 'node-cron';
 import Hotel from "./models/hotel";
+import revenueRoutes from "./routes/revenue";
 cloudinary.config({
     cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
     api_key:process.env.CLOUDINARY_API_KEY,
@@ -54,6 +55,7 @@ app.use("/api/users",userRoutes);
 app.use("/api/my-hotels",myHotelRoutes);
 app.use("/api/hotels",hotelsRoutes);
 app.use("/api/my-bookings",bookingRoutes)
+app.use("/api/revenue",revenueRoutes)
 app.listen(7000,()=>{
     console.log("server is running on localhost:7000");
 });
