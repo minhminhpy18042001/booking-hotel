@@ -137,7 +137,7 @@ async function getRevenueHotelDataByEveryDate(hotelId: string, startDate: string
 
   const start = new Date(startDate);
   const end = new Date(endDate);
-
+  let totalRevenue = 0;
   for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
     const dateStr = date.toISOString().split('T')[0];
     const bookingsForDate = bookings.filter((booking) => {
@@ -148,10 +148,14 @@ async function getRevenueHotelDataByEveryDate(hotelId: string, startDate: string
     const revenue = bookingsForDate.reduce((acc, booking) => {
       return acc + booking.totalCost;
     }, 0);
-
+    totalRevenue += revenue;
     revenueData.push({ date: dateStr, revenue });
   }
 
-  return revenueData;
+  return {
+    hotelName: hotel.name,
+    revenueData,
+    totalRevenue,
+  };
 }
 export default router;

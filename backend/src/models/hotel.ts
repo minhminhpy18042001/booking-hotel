@@ -19,12 +19,17 @@ const bookingSchema = new mongoose.Schema<BookingType>({
     date:{type:Date}
 },
 });
+const specialPriceSchema = new mongoose.Schema({
+  date: { type: Date, required: true },
+  price: { type: Number, required: true },
+});
 const roomSchema =new mongoose.Schema<Room>({
   name:{ type:String,required:true},
   roomSize:{type:String, required:true},
   description:{type:String, required:true},
   typeBed:{type:String,required:true},
   pricePerNight:{type:Number,required:true},
+  specialPrices: [specialPriceSchema],
   imageUrls:[{ type: String, required: true }],
   Bookings:[bookingSchema],
 });
