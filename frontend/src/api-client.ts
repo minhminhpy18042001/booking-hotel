@@ -405,3 +405,17 @@ export const fetchRevenueByHotelIdAndDateRange =async(hotelId:string,startDate:s
   }
   return response.json();
 }
+export const saveSpecialPrice =async(hotelId:string,roomId:string,price:string,date:string)=>{
+  const response = await fetch(`${API_BASE_URL}/api/my-hotels/${hotelId}/${roomId}/special-price`,{
+    method:"PUT",
+    credentials:"include",
+    headers:{
+      "Content-Type":"application/json",
+    },
+    body:JSON.stringify({price,date}),
+    });
+    if (!response.ok) {
+      throw new Error("Error fetching Revenue");
+    }
+    return response.json();
+}

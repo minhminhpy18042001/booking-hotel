@@ -1,0 +1,11 @@
+.closeModal {
+    position: relative;
+    background-color: #ff0000; /* Red color */
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff; /* White color */
+    border-radius: 5px;
+  }
