@@ -415,7 +415,7 @@ export const saveSpecialPrice =async(hotelId:string,roomId:string,price:string,d
     body:JSON.stringify({price,date}),
     });
     if (!response.ok) {
-      throw new Error("Error fetching Revenue");
+      throw new Error("Error saving special price");
     }
     return response.json();
 }

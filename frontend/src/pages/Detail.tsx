@@ -7,7 +7,10 @@ import { useAppContext } from "../contexts/AppContext";
 import { useState } from "react";
 import RoomDetail from "../forms/DetailsForm/RoomDetail";
 import avatar from '../images/avatar.png';
+import { useSearchContext } from "../contexts/SearchContext";
+import { Room } from "../../../backend/src/shared/types";
 const Detail = () => {
+    const search =useSearchContext();
     const { hotelId } = useParams();
     const [selectedRoom, setSelectedRoom] = useState("");
     const [openModal,setOpenModal]=useState(false);
@@ -21,6 +24,26 @@ const Detail = () => {
     if (!hotel) {
         return <></>;
     }
+
+    const checkInDateObj = new Date(search.checkIn);
+    const checkOutDateObj = new Date(search.checkOut);
+    const calculateTotalPrice = (room:Room) => {
+        
+        const totalDays = Math.round((checkOutDateObj.getTime() - checkInDateObj.getTime()) / (1000 * 3600 * 24));
+        let totalPrice = 0;
+        for (let i = 0; i < totalDays; i++) {
+          const currentDate = new Date(checkInDateObj.getTime() + i * 1000 * 3600 * 24);
+          const currentDateString = currentDate.toISOString().split("T")[0];
+          const specialDay = room.specialPrices.find((day) => new Date(day.date).toISOString().split("T")[0] === currentDateString);
+          if (specialDay) {
+            totalPrice += specialDay.price;
+          } else  {
+            totalPrice += room.pricePerNight;
+          }
+        }
+      
+        return totalPrice;
+      };
     const calculateAverageRating = () => {
         const totalScore = hotel.bookings.reduce((acc, booking) => {
             return booking.rating ? acc + booking.rating.score : acc;
@@ -96,13 +119,13 @@ const Detail = () => {
                                 )}
                             </div>
                             <div className="flex-1">
-                                <div className="text-lg font-normal text-gray-700">
-                                    {/* <FiMaximize2 className="inline mr-1" />
-                                    {room.roomSize} m<sup>2</sup>
-                                    <BiMoney className="inline mr-1" />
-                                    {room.pricePerNight} $  */}
+                                <div className="flex justify-between text-lg font-normal text-gray-700">
+                                    
+                                    <div>
                                     {room.typeBed} {<FaBed className="inline mr-1" />}
-                                </div>
+                                    </div>
+                                    {calculateTotalPrice(room)}$
+                                </div>                              
                             </div>
                         </div>
                     ))}

@@ -6,12 +6,11 @@ import { BiHotel, BiMoney, BiStar } from "react-icons/bi";
 import { FiMaximize2 } from "react-icons/fi";
 import { FaBed } from "react-icons/fa6";
 import { useState } from "react";
-import styles from "./../css/MyHotel.module.css"
-import DatePicker from "react-datepicker";
+import AddSpecialPrice from "../forms/AddSpecialPrice/AddSpecialPrice";
 const MyHotels = () => {
-  const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
-  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
-  const [selectedPrice, setPrice] = useState<string | null>(null);
+  const [selectedhotel, setSelectedHotel] = useState("");
+  const [selectedRoom, setSelectedRoom] = useState("");
+  const [openModal, setOpenModal] = useState(false);
   const { data: hotelData } = useQuery(
     "fetchMyHotels",
     apiClient.fetchMyHotels,
@@ -24,44 +23,12 @@ const MyHotels = () => {
     return <span>No Hotels found</span>;
   }
 
-  const today =new Date()
+  //const today =new Date()
   //const defaultDay = today.toISOString().split('T')[0];
 
-  const handleAddPrice = (room: string) => {
+  const handleSaveRoomHotel = (hotel:string,room: string) => {
+    setSelectedHotel(hotel);
     setSelectedRoom(room);
-    const modal = document.getElementById('add-price-modal');
-    if (modal) {
-      modal.style.display = 'block';
-    }
-  };
-
-  const handleSavePrice = (event: React.FormEvent, hotelid: string) => {
-    event.preventDefault();
-    // const dayElement = document.getElementById('date');
-    // const day = dayElement ? (dayElement as HTMLInputElement).value : null;
-    const priceElement = document.getElementById('price');
-    const price = priceElement ? (priceElement as HTMLInputElement).value : null;
-    // Save the price for the specific day
-    // Update the room object with the new price
-    //setSelectedDay(day);
-    console.log(selectedDay);
-    setPrice(price);
-    console.log(selectedPrice);
-      if (selectedRoom && selectedPrice && selectedDay) {
-        apiClient.saveSpecialPrice(
-          hotelid,
-          selectedRoom,
-          selectedPrice,
-          selectedDay.toISOString(),
-        );
-        const modal = document.getElementById('add-price-modal');
-        if (modal) {
-          modal.style.display = 'none';
-        }
-      } else {
-        console.error("Room, price, or day is not selected");
-      }
-    
   };
 
   return (
@@ -133,10 +100,13 @@ const MyHotels = () => {
                         {room.typeBed}
                       </div>
                       <div className="rounded-sm p-3 flex items-center font-normal text-lg">
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleAddPrice(room._id)}>Add Price for Specific Day</button>
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => { handleSaveRoomHotel(hotel._id,room._id); setOpenModal(true) }}>Add Price for Specific Day</button>
+                        {openModal && (
+                          <AddSpecialPrice roomId={selectedRoom} hotelId={selectedhotel} onClose={setOpenModal} />
+                        )}
                       </div>
-                      
-                      <div id="add-price-modal" style={{ display: 'none' }}>
+
+                      {/* <div id="add-price-modal" style={{ display: 'none' }}>
                         <div className="modal-header flex justify-between">
                           <h2 className="text-lg font-bold">Add Price for Specific Day</h2>
                           <button className={styles.closeModal} onClick={() => {
@@ -162,7 +132,7 @@ const MyHotels = () => {
                           <input id="price" type="number" step="" defaultValue="10" className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" />
                           <button type="button" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={(event) => handleSavePrice(event,hotel._id)}>Save Price</button>
                         </form>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 ))}
