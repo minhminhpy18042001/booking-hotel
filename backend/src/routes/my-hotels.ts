@@ -163,6 +163,31 @@ router.get("/:id", verifyToken as any,verifyRole(['owner']), async (req: Request
     res.status(500).json({ message: "Error fetching hotels" });
   }
 });
+router.put("/:hotelId/special-prices/allroom", verifyToken as any, verifyRole(['owner']), async (req: Request, res: Response): Promise<any> => {
+  try {
+    const date = new Date(req.body.date);
+    const price = req.body.price;
+    const { hotelId } = req.params;
+    const hotel = await Hotel.findOneAndUpdate(
+      {
+        _id: hotelId,
+        userId: req.userId,
+      },
+      {
+        $push: { 'rooms.$[].specialPrices': { date, price } },
+        lastUpdated: new Date(),
+      },
+      { new: true }
+    );
+    if (!hotel) {
+      return res.status(404).json({ message: "Hotel not found" });
+    }
+    await hotel.save();
+    res.status(201).json(hotel);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
+  }
+});
 router.put("/:hotelId/:roomId/special-price",verifyToken as any,verifyRole(['owner']),async (req: Request, res: Response): Promise<any> =>{
   try {
     const date = new Date(req.body.date);
@@ -189,6 +214,7 @@ router.put("/:hotelId/:roomId/special-price",verifyToken as any,verifyRole(['own
     res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 });
+
 
 async function uploadImages(imageFiles: Express.Multer.File[]) {
     const uploadPromises = imageFiles.map(async (image) => {

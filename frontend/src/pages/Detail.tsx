@@ -27,16 +27,17 @@ const Detail = () => {
 
     const checkInDateObj = new Date(search.checkIn);
     const checkOutDateObj = new Date(search.checkOut);
+    const totalDays = Math.round((checkOutDateObj.getTime() - checkInDateObj.getTime()) / (1000 * 3600 * 24));
     const calculateTotalPrice = (room:Room) => {
         
-        const totalDays = Math.round((checkOutDateObj.getTime() - checkInDateObj.getTime()) / (1000 * 3600 * 24));
+       
         let totalPrice = 0;
         for (let i = 0; i < totalDays; i++) {
           const currentDate = new Date(checkInDateObj.getTime() + i * 1000 * 3600 * 24);
           const currentDateString = currentDate.toISOString().split("T")[0];
           const specialDay = room.specialPrices.find((day) => new Date(day.date).toISOString().split("T")[0] === currentDateString);
           if (specialDay) {
-            totalPrice += specialDay.price;
+            totalPrice += Math.round(room.pricePerNight*(1 + specialDay.price / 100)); // Apply the special price percentage
           } else  {
             totalPrice += room.pricePerNight;
           }
@@ -120,11 +121,26 @@ const Detail = () => {
                             </div>
                             <div className="flex-1">
                                 <div className="flex justify-between text-lg font-normal text-gray-700">
-                                    
                                     <div>
-                                    {room.typeBed} {<FaBed className="inline mr-1" />}
+                                        {room.typeBed} {<FaBed className="inline mr-1" />}
                                     </div>
-                                    {calculateTotalPrice(room)}$
+                                    <div className="flex justify-between gap-2">
+                                        <div className="text-gray-500">
+                                            {calculateTotalPrice(room) < room.pricePerNight * totalDays ?
+                                                <del>{room.pricePerNight * totalDays}$</del>
+                                                :
+                                                ''}
+                                        </div>
+                                        <div className="text-red-500 font-semibold">
+                                            {Math.round((calculateTotalPrice(room) - room.pricePerNight * totalDays) / (room.pricePerNight * totalDays) * 100) < 0 ?
+                                                `${Math.round((calculateTotalPrice(room) - room.pricePerNight * totalDays) / (room.pricePerNight * totalDays) * 100)}%`
+                                                :
+                                                ''}
+                                        </div>
+                                        <div className="text-red-700 font-bold">
+                                            {calculateTotalPrice(room)}$
+                                        </div>
+                                    </div>
                                 </div>                              
                             </div>
                         </div>

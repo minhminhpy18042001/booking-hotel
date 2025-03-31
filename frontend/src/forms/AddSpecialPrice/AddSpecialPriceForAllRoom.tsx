@@ -5,35 +5,35 @@ import { useAppContext } from "../../contexts/AppContext";
 
 type Props = {
     onClose: React.Dispatch<React.SetStateAction<boolean>>
-    roomId: string;
     hotelId: string;
-    defaultPrice: number;
 }
 
-const AddSpecialPrice = ({ roomId, hotelId,defaultPrice, onClose }: Props) => {
-    const [specialPrice, setSpecialPrice] = useState<string | null>(null);
+const AddSpecialPriceForAllRoom = ({hotelId, onClose }: Props) => {
+    const [pecentage, setpecentage] = useState<string | null>(null);
     const [selectedDay, setSelectedDay] = useState<Date | null>(null);
     const { showToast } = useAppContext();
-    const calculatePercentageChange = (specialPrice: number, defaultPrice: number) => {
-        if (defaultPrice === 0) return 0;
-        if (!specialPrice ) return 0;
-        const percentageChange = ((specialPrice - defaultPrice) / defaultPrice) * 100;
-        return Math.round(percentageChange * 100) / 100;
-    };
+    // const calculatePercentageChange = (specialPrice: number, defaultPrice: number) => {
+    //     if (defaultPrice === 0) return 0;
+    //     if (!specialPrice ) return 0;
+    //     const percentageChange = ((specialPrice - defaultPrice) / defaultPrice) * 100;
+    //     return Math.round(percentageChange * 100) / 100;
+    // };
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-          if ( specialPrice && selectedDay) {
+          if ( pecentage && selectedDay) {
             const offset = selectedDay.getTimezoneOffset() * 60 * 1000; // Get the offset in milliseconds
-            const utcDate = new Date(selectedDay.getTime() - offset);
-            const percentChange=calculatePercentageChange(Number(specialPrice) || 0, defaultPrice) //  Add the offset to the date
-            apiClient.saveSpecialPrice(
+            const utcDate = new Date(selectedDay.getTime() - offset); //  Add the offset to the date
+            console.log(utcDate.toISOString());
+            console.log(hotelId);
+            console.log(pecentage.toString());
+            apiClient.saveSpecialPriceforAllRooms(
               hotelId,
-              roomId,
-              percentChange.toString(),
+              pecentage.toString(),
               utcDate.toISOString(),
             ).then(() => {
                 showToast({ message: 'Special price saved successfully', type: 'SUCCESS' });
                 onClose(false); 
+                
               })
               .catch((error) => {
                 showToast({ message: error.message, type: 'ERROR' });
@@ -51,43 +51,22 @@ const AddSpecialPrice = ({ roomId, hotelId,defaultPrice, onClose }: Props) => {
                     <div className="mb-4 flex justify-between">
                         <div className="w-1/2 mr-2">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
-                                Price
+                                Pecentage change
                             </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="price"
-                                type="number"
-                                min={0}
-                                name="price"
-                                value={specialPrice ?? ""}
-                                onChange={(event) => setSpecialPrice(event.target.value)}
-                                required
-                            />
-                            <span
-                                className={`text-sm ${calculatePercentageChange(Number(specialPrice) || 0, defaultPrice) > 0
-                                        ? 'text-green-600'
-                                        : calculatePercentageChange(Number(specialPrice) || 0, defaultPrice) < 0
-                                            ? 'text-red-600'
-                                            : 'text-gray-700'
-                                    }`}
-                            >
-                                {calculatePercentageChange(Number(specialPrice) || 0, defaultPrice)}%
+                            <span className="flex items-center">
+                                <input
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${pecentage !== null && !isNaN(Number(pecentage)) && Number(pecentage) >= 0 ? 'text-green-500' : 'text-red-500'}`}
+                                    id="pecentage"
+                                    type="number"
+                                    min={-90}
+                                    max={500}
+                                    name="pecentage"
+                                    value={pecentage ?? ""}
+                                    onChange={(event) => setpecentage(event.target.value)}
+                                    required
+                                />
+                                %
                             </span>
-                        </div>
-                        <div className="w-1/2">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="defaultPrice">
-                                Default Price
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="defaultPrice"
-                                type="number"
-                                name="defaultPrice"
-                                value={defaultPrice ?? 0}
-                                readOnly
-                                required
-                            />
-                            
                         </div>
                     </div>
                     <div className="mb-4">
@@ -117,4 +96,4 @@ const AddSpecialPrice = ({ roomId, hotelId,defaultPrice, onClose }: Props) => {
     );
 };
 
-export default AddSpecialPrice;
+export default AddSpecialPriceForAllRoom;

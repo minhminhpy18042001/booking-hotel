@@ -7,10 +7,13 @@ import { FiMaximize2 } from "react-icons/fi";
 import { FaBed } from "react-icons/fa6";
 import { useState } from "react";
 import AddSpecialPrice from "../forms/AddSpecialPrice/AddSpecialPrice";
+import AddSpecialPriceForAllRoom from "../forms/AddSpecialPrice/AddSpecialPriceForAllRoom";
 const MyHotels = () => {
   const [selectedhotel, setSelectedHotel] = useState("");
   const [selectedRoom, setSelectedRoom] = useState("");
+  const[selectedPrice,setSelectedPrice]=useState<number>(0);
   const [openModal, setOpenModal] = useState(false);
+  const [openModalAllRoom, setOpenModalAllRoom] = useState(false);
   const { data: hotelData } = useQuery(
     "fetchMyHotels",
     apiClient.fetchMyHotels,
@@ -26,9 +29,10 @@ const MyHotels = () => {
   //const today =new Date()
   //const defaultDay = today.toISOString().split('T')[0];
 
-  const handleSaveRoomHotel = (hotel:string,room: string) => {
+  const handleSaveRoomHotel = (hotel:string,room: string,price:number) => {
     setSelectedHotel(hotel);
     setSelectedRoom(room);
+    setSelectedPrice(price);
   };
 
   return (
@@ -84,7 +88,18 @@ const MyHotels = () => {
             <div className="text-2xl font-bold">
               <span className="flex justify-between p-1">
                 Rooms
-                <Link to={`/edit-hotel/${hotel._id}/addRoom`} className="flex bg-blue-600 text-xl leading-4 font-bold text-white p-2 hover:bg-blue-500 hover:text-red-900">Add Room</Link>
+                <div className="flex justify-between gap-1">
+                  <button
+                    className="bg-blue-600 text-xl leading-4 font-bold text-white p-2 hover:bg-blue-500 hover:text-red-900 ml-2"
+                    onClick={() => { setSelectedHotel(hotel._id); setOpenModalAllRoom(true) }}
+                  >
+                    Add Special Price
+                  </button>
+                  {openModalAllRoom && (
+                    <AddSpecialPriceForAllRoom hotelId={selectedhotel} onClose={setOpenModalAllRoom} />
+                  )}
+                  <Link to={`/edit-hotel/${hotel._id}/addRoom`} className="flex bg-blue-600 text-xl leading-4 font-bold text-white p-2 hover:bg-blue-500 hover:text-red-900">Add Room</Link>
+                </div>
               </span>
               <div className="grid grid-rows-2">
                 {hotel.rooms.map((room) => (
@@ -100,9 +115,9 @@ const MyHotels = () => {
                         {room.typeBed}
                       </div>
                       <div className="rounded-sm p-3 flex items-center font-normal text-lg">
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => { handleSaveRoomHotel(hotel._id,room._id); setOpenModal(true) }}>Add Price for Specific Day</button>
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => { handleSaveRoomHotel(hotel._id,room._id,room.pricePerNight); setOpenModal(true) }}>Add Price for Specific Day</button>
                         {openModal && (
-                          <AddSpecialPrice roomId={selectedRoom} hotelId={selectedhotel} onClose={setOpenModal} />
+                          <AddSpecialPrice roomId={selectedRoom} hotelId={selectedhotel} defaultPrice={selectedPrice} onClose={setOpenModal} />
                         )}
                       </div>
 
