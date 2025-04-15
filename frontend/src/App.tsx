@@ -22,6 +22,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import RevenueManage from "./forms/AdminManage/RevenueManage";
 import RevenuePage from "./pages/RevenuePage";
+import AddCredit from "./forms/payment/AddCredit";
+import CheckPayment from "./forms/payment/CheckPayment";
 
 
 
@@ -116,7 +118,17 @@ const App =()=>{
             <EditReview/> 
           </Layout>
         }/>
+        <Route path ="/add-credit" element={
+          <Layout>
+            <AddCredit/> 
+          </Layout>
+        }/>
         </>}
+        <Route path="/check-payment" element={
+          <Layout>
+            <CheckPayment/>
+          </Layout>
+        }/>
         <Route path="*" element={<Navigate to="/"/>}/>
       </Routes>
     </BrowserRouter>

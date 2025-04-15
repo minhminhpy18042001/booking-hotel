@@ -5,6 +5,7 @@ export type UserType = {
   firstName: string;
   lastName: string;
   role:string;
+  credit: number;
 };
 
 export type HotelType = {
@@ -68,8 +69,12 @@ export type HotelSearchResponse = {
   };
 };
 
-export type PaymentIntentResponse = {
-  paymentIntentId: string;
-  clientSecret: string;
-  totalCost: number;
-};
+export type PaymentType ={
+  _id:string;
+  amount:number;
+  userId:string;
+  paymentMethod:string;
+  paymentStatus:string;
+  paymentDate:Date;
+  paymentFor:string;
+}

@@ -1,6 +1,6 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-import { BookingType, HotelSearchResponse, HotelType, Room, UserType } from "../../backend/src/shared/types";
+import { BookingType, HotelSearchResponse, HotelType, PaymentType, Room, UserType } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 import {CancelBookingFormData} from "./forms/CancelBookingForm/CancelBookingForm"
 import { UpdateUserFormData } from "./forms/AdminManage/UserManage";
@@ -432,4 +432,32 @@ export const saveSpecialPriceforAllRooms =async(hotelId:string,price:string,date
       throw new Error("Error saving special price");
     }
     return response.json();
+}
+export const createPayment =async (amount:number):Promise<string> => {
+  const response = await fetch(`${API_BASE_URL}/api/payment/create-payment-vnpay/${amount}`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error create payment");
+  }
+  return response.json();
+}
+export const checkPayment =async (searchParams:string) => {
+  const response = await fetch(`${API_BASE_URL}/api/payment/check-payment-vnpay?${searchParams}`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error check payment");
+  }
+  return response.json();
+}
+
+export const fetchPayments=async():Promise<PaymentType[]>=>{
+  const response = await fetch(`${API_BASE_URL}/api/payment`,{
+    credentials:"include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching Payment");
+  }
+  return response.json();
 }
