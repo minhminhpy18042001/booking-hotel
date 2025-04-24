@@ -5,6 +5,7 @@ import BookingManage from "../forms/OwnerManage/BookingManage";
 import CommissionFee from "../forms/OwnerManage/ComissionFee";
 import * as apiClient from "../api-client";
 import { UserType } from "../../../backend/src/shared/types";
+import RevenueManageOwner from "../forms/OwnerManage/RevenueManageOwner";
 const MyGuests = () => {
     const { isLoggedIn, isOwner } = useAppContext();
     const [selectedEntity, setSelectedEntity] = useState("Booking"); // Default selection
@@ -49,6 +50,10 @@ const MyGuests = () => {
                     <li onClick={() => setSelectedEntity("Payment")}
                         style={{ cursor: "pointer", padding: "12px", borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: selectedEntity === "Payment" ? "#e0e0e0" : "transparent" }}>
                         Payment
+                    </li>
+                    <li onClick={() => setSelectedEntity("Revenue")}
+                        style={{ cursor: "pointer", padding: "12px", borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: selectedEntity === "Revenue" ? "#e0e0e0" : "transparent" }}>
+                        Revenue
                     </li>
                 </ul>
             </div>
@@ -99,6 +104,8 @@ const MyGuests = () => {
             {selectedEntity==="User"&&<UserManage></UserManage>} */}
                 {selectedEntity === "Booking" && <BookingManage></BookingManage>}
                 {selectedEntity === "Payment" && <CommissionFee></CommissionFee>}
+                {selectedEntity === "Revenue" && <RevenueManageOwner></RevenueManageOwner>}
+                {/* Add more components based on selectedEntity */}
                 {/* You can add more admin functionalities or display data based on selectedEntity */}
 
             </div>

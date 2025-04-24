@@ -87,7 +87,7 @@ const RevenuePage = () => {
               </tr>
             </thead>
             <tbody>
-              {revenue?.revenueData.map((data: RevenueData, index: number) => (
+              {revenue?.revenueData.filter((data: RevenueData) => data.revenue > 0).map((data: RevenueData, index: number) => (
                 <tr key={index}>
                   <td>{moment(data.date).format('DD-MM-YYYY')}</td>
                   <td>{data.revenue}</td>

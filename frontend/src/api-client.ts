@@ -396,6 +396,15 @@ export const fetchRevenueByDateRange =async(startDate:string,endDate:string)=>{
   }
   return response.json();
 }
+export const fetchRevenueOwnerByDateRange =async(startDate:string,endDate:string)=>{
+  const response = await fetch(`${API_BASE_URL}/api/revenue/hotelsOwner/by-date-range?startDate=${startDate}&endDate=${endDate}`,{
+    credentials:"include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching Revenue");
+  }
+  return response.json();
+}
 export const fetchRevenueByHotelIdAndDateRange =async(hotelId:string,startDate:string,endDate:string)=>{  
   const response = await fetch(`${API_BASE_URL}/api/revenue/hotels/${hotelId}/by-date-range?startDate=${startDate}&endDate=${endDate}`,{
     credentials:"include",
