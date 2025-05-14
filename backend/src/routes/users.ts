@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express,{Request,Response} from "express";
 import User from "../models/user";
 import jwt from "jsonwebtoken";
@@ -6,6 +8,7 @@ import verifyToken from "../middleware/auth";
 import verifyRole from "../middleware/verifyRole";
 var nodemailer = require('nodemailer');
 import bcrypt from "bcryptjs"
+
 const router =express.Router();
 router.get("/me",verifyToken as any,async(req:Request,res: Response): Promise<any>=>{
     const userId =req.userId;
@@ -111,13 +114,13 @@ router.post("/forgot-password",async(req:Request,res: Response):Promise<any> =>{
                 port: 465,
                 secure: true,
                 auth: {
-                    user: 'njs649404@gmail.com',
-                    pass: 'cwph zowu thao azfm'
+                    user: process.env.GOOGLE_USER,
+                    pass: process.env.GOOGLE_PASS as string,
                 }
             });
 
             var mailOptions = {
-                from: 'njs649404@gmail.com',
+                from: process.env.GOOGLE_USER,
                 to: email,
                 subject: 'Reset your password',
                 text: `${process.env.FRONTEND_URL}/reset-password/${user._id}/${token}`

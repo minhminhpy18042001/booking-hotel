@@ -86,6 +86,7 @@ router.get("/:bookingId",verifyToken as any,async (req: Request, res: Response):
         res.status(500).json({ message: "Something went wrong" });
     }
 })
+// Update booking status to "cancelled"
 router.put("/:bookingId",verifyToken as any,async (req: Request, res: Response): Promise<any> =>{
     try {
 

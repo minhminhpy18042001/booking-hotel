@@ -3,6 +3,7 @@ import Hotel from "../models/hotel";
 import { BookingType, HotelSearchResponse } from "../shared/types";
 import { param, validationResult } from "express-validator";
 import verifyToken from "../middleware/auth";
+import nodemailer from "nodemailer";
 const router =express.Router();
 router.get("/search", async (req: Request, res: Response) => {
   try {
@@ -45,6 +46,7 @@ router.get("/recently-watched", (req: Request, res: Response) => {
   const recentlyWatched = req.cookies.recentlyWatched ? JSON.parse(req.cookies.recentlyWatched) : [];
   res.status(200).json(recentlyWatched);
 });
+// Create a new booking
 router.post(
   "/:hotelId/bookings/:roomId",
   verifyToken as any,
@@ -64,15 +66,60 @@ router.post(
         { _id: req.params.hotelId },
         {
           $push: { bookings: newBooking },
-          lastUpdated:today,
-        }
+          lastUpdated: today,
+        },
+        { new: true } // Ensure the updated document is returned
       );
 
       if (!hotel) {
-        return res.status(400).json({ message: "hotel not found" });
+        return res.status(400).json({ message: "Hotel not found" });
       }
 
+      // Retrieve the newly added booking
+      const addedBooking = hotel.bookings[hotel.bookings.length - 1]; // Get the last booking
+      if (!addedBooking) {
+        return res.status(500).json({ message: "Failed to retrieve the new booking" });
+      }
+      const newBookingId = addedBooking._id; // Access the ID of the new booking
+
       await hotel.save();
+
+      // Nodemailer configuration
+      var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+          user: process.env.GOOGLE_USER,
+          pass: process.env.GOOGLE_PASS as string,
+        },
+      });
+
+      var mailOptions = {
+        from: process.env.GOOGLE_USER,
+        to: newBooking.email,
+        subject: 'Booking Confirmation - Your Booking ID: ' + newBookingId,
+        html: `
+          <h1>Booking Confirmation</h1>
+          <p>Dear ${newBooking.firstName} ${newBooking.lastName},</p>
+          <p>Your booking at <strong>${hotel.name}</strong> has been confirmed.</p>
+          <p><strong>Booking ID:</strong> ${newBookingId}</p>
+          <p>Thank you for choosing our service!</p>
+          <p><a href="${process.env.FRONTEND_URL}/my-bookings" style="display: inline-block; padding: 10px 20px; color: white; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Manager My Bookings</a></p>
+          <p>Best regards,</p>
+          <p>The Booking Team</p>
+        `,
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
+
       res.status(200).send();
     } catch (error) {
       console.log(error);
@@ -179,7 +226,7 @@ const constructSearchQuery = (queryParams: any) => {
     constructedQuery.$or = [
       { city: new RegExp(queryParams.destination, "i") },
       { country: new RegExp(queryParams.destination, "i") },
-      {name:new RegExp(queryParams.destination, "i")},
+      { name: new RegExp(queryParams.destination, "i") },
     ];
   }
 
@@ -221,9 +268,10 @@ const constructSearchQuery = (queryParams: any) => {
 
   if (queryParams.maxPrice) {
     constructedQuery.pricePerNight = {
-      $lte: parseInt(queryParams.maxPrice).toString(),
+      $lte: parseInt(queryParams.maxPrice),
     };
   }
+
   constructedQuery.statusHotel = { $ne: "pending" };
 
   return constructedQuery;
