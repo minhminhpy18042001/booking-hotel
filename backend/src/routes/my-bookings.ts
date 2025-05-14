@@ -3,7 +3,7 @@ import verifyToken from "../middleware/auth";
 import Hotel from "../models/hotel";
 import { HotelType } from "../shared/types";
 import multer from "multer";
-
+import nodemailer from "nodemailer";
 const upload = multer(); 
 const router = express.Router();
 
@@ -112,7 +112,46 @@ router.put("/:bookingId",verifyToken as any,async (req: Request, res: Response):
         if (!hotel) {
             return res.status(404).json({ message: "Hotel not found" });
         }
-        //await hotel.save();
+        // Nodemailer configuration for cancellation
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+              user: process.env.GOOGLE_USER,
+              pass: process.env.GOOGLE_PASS as string,
+            },
+        });
+
+        var mailOptions = {
+            from: process.env.GOOGLE_USER,
+            to: booking.email,
+            subject: 'Booking Cancellation - Your Booking ID: ' + bookingId,
+            html: `
+              <h1>Booking Cancellation</h1>
+              <p>Dear ${booking.firstName} ${booking.lastName},</p>
+              <p>Your booking at <strong>${hotela.name}</strong> has been cancelled.</p>
+              <p><strong>Booking ID:</strong> ${bookingId}</p>
+              <p>If you have any questions, please contact our support team.</p>
+              <p>
+                <a href="${process.env.FRONTEND_URL}/my-bookings" style="display: inline-block; padding: 10px 20px; color: white; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Manage My Bookings</a>
+              </p>
+              <p>
+                <a href="${process.env.FRONTEND_URL}/detail/${hotela._id}" style="display: inline-block; padding: 10px 20px; color: white; background-color: #28a745; text-decoration: none; border-radius: 5px;">Book Again</a>
+              </p>
+              <p>Best regards,</p>
+              <p>The Booking Team</p>
+            `,
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Cancellation email sent: " + info.response);
+            }
+        });
         res.status(201).json(hotel);
     } catch (error) {
         res.status(500).json({ message: "Something went wrong" });
