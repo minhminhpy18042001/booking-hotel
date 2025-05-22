@@ -6,12 +6,13 @@ import { useAppContext } from "../../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
 
 type Props={
-    booking:BookingType
+    booking:BookingType;
+    hotelId:string;
 }
 export type CancelBookingFormData={
     bookingId:string;
 }
-const CancelBookingForm =({booking}: Props)=>{
+const CancelBookingForm =({booking,hotelId}: Props)=>{
     const { showToast } = useAppContext();
     const navigate =useNavigate();
     const { mutate: cancelBookingRoom,} = useMutation(
@@ -50,7 +51,6 @@ const CancelBookingForm =({booking}: Props)=>{
             </div>
             <div>
             <div className="flex justify-between w-[300px]">
-                
                     <span className="font-bold mr-2">Total Cost:</span>
                     <span>
                     {booking.totalCost}$
@@ -61,6 +61,7 @@ const CancelBookingForm =({booking}: Props)=>{
                     </span>
                 </div>
             </div>
+            <div className="mt-2 text-sm text-gray-600">Booking ID: <span className="font-mono">{booking._id}</span></div>
             <div>
                 {booking.statusBooking === "completed" ?
                     (!booking.rating ?
@@ -74,9 +75,14 @@ const CancelBookingForm =({booking}: Props)=>{
                     <button className="w-[300px] bg-red-600 text-white h-full p-2 font-bold text-xl hover:bg-red-500">
                         Cancel
                     </button>:null)}
-                {/* <button  className="w-[300px] bg-red-600 text-white h-full p-2 font-bold text-xl hover:bg-red-500">
-                    Cancel
-                </button> */}
+                {(booking.statusBooking === "completed" || booking.statusBooking === "cancelled") && (
+                    <a
+                        href={`/detail/${hotelId}`}
+                        className="w-[300px] mt-2 inline-block bg-blue-600 text-white p-2 font-bold text-xl text-center rounded hover:bg-blue-500"
+                    >
+                        Book Again
+                    </a>
+                )}
             </div>
         </form>
     )
