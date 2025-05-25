@@ -24,6 +24,7 @@ import RevenueManage from "./forms/AdminManage/RevenueManage";
 import RevenuePage from "./pages/RevenuePage";
 import AddCredit from "./forms/payment/AddCredit";
 import CheckPayment from "./forms/payment/CheckPayment";
+import Profile from "./pages/Profile";
 
 
 
@@ -60,6 +61,11 @@ const App =()=>{
         <Route path ="/hotel/:hotelId/booking/:roomId" element={
           <Layout>
             <Booking/> 
+          </Layout>
+        }/>
+        <Route path ="/profile" element={
+          <Layout>
+            <Profile/> 
           </Layout>
         }/>
         <Route path="/revenue" element={

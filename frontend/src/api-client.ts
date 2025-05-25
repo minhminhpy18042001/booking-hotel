@@ -470,3 +470,45 @@ export const fetchPayments=async():Promise<PaymentType[]>=>{
   }
   return response.json();
 }
+export const changePassword =async (currentPassword:string,newPassword:string)=>{
+  const response = await fetch(`${API_BASE_URL}/api/users/change-password`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ currentPassword, newPassword}),
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.message);
+  }
+  return body;
+}
+export const updateUserProfile = async (firstName:string,lastName:string,phone:string) => {
+  const response = await fetch(`${API_BASE_URL}/api/users/update-profile`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ firstName, lastName, phone }),
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.message);
+  }
+  return body;
+}
+export const uploadAvatar = async (formData:FormData) => {
+  const response = await fetch(`${API_BASE_URL}/api/users/update-avatar`, {
+    method: "PUT",
+    credentials: "include",
+    body: formData,
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.message);
+  }
+  return body;
+}

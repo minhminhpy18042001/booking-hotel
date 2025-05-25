@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
     lastName:{type:String,required:true},
     role:{type:String,enum:['user','owner','admin'],default:'user'},
     credit:{type:Number,default:0},
+    phone:{type:String,default:""},
+    avatar:{type:String},
 });
 
 userSchema.pre("save",async function(next) {

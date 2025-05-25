@@ -8,8 +8,16 @@ import verifyToken from "../middleware/auth";
 import verifyRole from "../middleware/verifyRole";
 var nodemailer = require('nodemailer');
 import bcrypt from "bcryptjs"
-
+import cloudinary from "cloudinary";
+import multer from "multer";
 const router =express.Router();
+const storage =multer.memoryStorage();
+const upload =multer({
+    storage:storage,
+    limits:{
+        fileSize:5*1024*1024,
+    }
+})
 router.get("/me",verifyToken as any,async(req:Request,res: Response): Promise<any>=>{
     const userId =req.userId;
     try {
@@ -160,4 +168,70 @@ router.post("/reset-password/:userId/:token",async(req:Request,res: Response):Pr
         res.status(500).send({ message: "Something went wrong" })
     }
 })
+router.put("/change-password", verifyToken as any, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.userId;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Current password is incorrect" });
+        }
+        user.password = newPassword;
+        await user.save();
+        res.status(200).json({ message: "Password changed successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Something went wrong" });
+    }
+});
+router.put("/update-profile", verifyToken as any, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { firstName, lastName, phone } = req.body;
+        const userId = req.userId;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.phone = phone;
+        await user.save();
+        res.status(200).json({ message: "Profile updated successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Something went wrong" });
+    }
+});
+router.put("/update-avatar", verifyToken as any, upload.single("avatar"), async (req: Request, res: Response): Promise<any> => {
+    try {
+        const imageFile = req.file as Express.Multer.File;
+        const imageUrls = await uploadImages([imageFile]);
+        const userId = req.userId;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        user.avatar = imageUrls[0];
+        await user.save();
+        res.status(200).json({ message: "Avatar updated successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Something went wrong" });
+    }
+});
+async function uploadImages(imageFiles: Express.Multer.File[]) {
+    const uploadPromises = imageFiles.map(async (image) => {
+        const b64 = Buffer.from(image.buffer).toString("base64");
+        let dataURI = "data:" + image.mimetype + ";base64," + b64;
+        const res = await cloudinary.v2.uploader.upload(dataURI);
+        return res.url;
+    });
+
+    const imageUrls = await Promise.all(uploadPromises);
+    return imageUrls;
+}
 export default router;
