@@ -24,7 +24,7 @@ const SearchBar = () =>{
         );
         navigate("/search");
     };
-    const minDate = new Date();
+    const today = new Date();
     const minCheckoutDate =new Date();
     minCheckoutDate.setDate(checkIn.getDate()+1);
     const maxDate = new Date();
@@ -67,11 +67,20 @@ const SearchBar = () =>{
             <div>
                 <DatePicker
                     selected={checkIn}
-                    onChange={(date) => {setCheckIn(date as Date); setCheckOut(date as Date)}}
+                    onChange={(date) => {
+                        const newCheckIn = date as Date;
+                        setCheckIn(newCheckIn);
+                        // Only set check-out if new check-in is after or equal to current check-out
+                        if (!checkOut || newCheckIn >= checkOut) {
+                            const nextDay = new Date(newCheckIn);
+                            nextDay.setDate(newCheckIn.getDate() + 1);
+                            setCheckOut(nextDay);
+                        }
+                    }}
                     selectsStart
                     startDate={checkIn}
                     endDate={checkOut}
-                    minDate={minDate}
+                    minDate={today}
                     maxDate={maxDate}
                     placeholderText="Check-in Date"
                     className="min-w-full bg-white p-2 focus:outline-none"

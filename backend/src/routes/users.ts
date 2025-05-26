@@ -85,6 +85,19 @@ router.get("/getUsers",verifyToken as any,async(req:Request,res: Response): Prom
         res.status(500).send({message:"Something went wrong"})
     }
 })
+router.get("/:userId",verifyToken as any,async(req:Request,res: Response): Promise<any>=>{
+    try {
+        const userId =req.params.userId;
+        const user =await User.findById(userId).select("-password");
+        if(!user){
+            return res.status(400).json({message:"User not found"});
+        }
+        res.json(user);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({message:"Something went wrong"})
+    }
+})
 router.put("/updateRole/:userId/:role",
     verifyToken as any,verifyRole(['admin']),async(req:Request,res:Response):Promise<any>=>{
         try {

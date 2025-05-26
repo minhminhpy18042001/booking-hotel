@@ -23,12 +23,23 @@ type SearchContextProviderProps = {
   };
   
 export const SearchContextProvider =({children}:SearchContextProviderProps) =>{
-    const [destination,setDestination]=useState<string>(()=>sessionStorage.getItem("destination") ||"")
-    const [checkIn, setCheckIn] = useState<Date>(()=>new Date(sessionStorage.getItem("checkIn")||new Date().toISOString()));
-    const [checkOut, setCheckOut] = useState<Date>(()=>new Date(sessionStorage.getItem("checkOut")||new Date().toISOString()));
-    const [adultCount, setAdultCount] = useState<number>(()=>parseInt(sessionStorage.getItem("adultCount")||"1"));
-    const [childCount, setChildCount] = useState<number>(()=>parseInt(sessionStorage.getItem("childCount")||"0"));
-    const [hotelId,setHotelId] =useState<string>(()=>sessionStorage.getItem("hotelId")||"");
+    const [destination,setDestination]=useState<string>(()=>localStorage.getItem("destination") ||"")
+    const [checkIn, setCheckIn] = useState<Date>(()=>new Date(localStorage.getItem("checkIn")||new Date().toISOString()));
+    const [checkOut, setCheckOut] = useState<Date>(() => {
+        const checkInStr = localStorage.getItem("checkIn");
+        const checkOutStr = localStorage.getItem("checkOut");
+        if (checkOutStr) {
+            return new Date(checkOutStr);
+        }
+        // If no checkout in storage, set to next day after checkIn
+        const checkInDate = checkInStr ? new Date(checkInStr) : new Date();
+        const nextDay = new Date(checkInDate);
+        nextDay.setDate(checkInDate.getDate() + 1);
+        return nextDay;
+    });
+    const [adultCount, setAdultCount] = useState<number>(()=>parseInt(localStorage.getItem("adultCount")||"1"));
+    const [childCount, setChildCount] = useState<number>(()=>parseInt(localStorage.getItem("childCount")||"0"));
+    const [hotelId,setHotelId] =useState<string>(()=>localStorage.getItem("hotelId")||"");
     const saveSearchValues =(
         destination: string,
         checkIn: Date,
@@ -45,14 +56,14 @@ export const SearchContextProvider =({children}:SearchContextProviderProps) =>{
         if(hotelId){
             setHotelId(hotelId);
         }
-        sessionStorage.setItem("destination", destination);
-        sessionStorage.setItem("checkIn", checkIn.toISOString());
-        sessionStorage.setItem("checkOut", checkOut.toISOString());
-        sessionStorage.setItem("adultCount", adultCount.toString());
-        sessionStorage.setItem("childCount", childCount.toString());
+        localStorage.setItem("destination", destination);
+        localStorage.setItem("checkIn", checkIn.toISOString());
+        localStorage.setItem("checkOut", checkOut.toISOString());
+        localStorage.setItem("adultCount", adultCount.toString());
+        localStorage.setItem("childCount", childCount.toString());
 
         if (hotelId) {
-            sessionStorage.setItem("hotelId", hotelId);
+            localStorage.setItem("hotelId", hotelId);
         }
     }
     return(

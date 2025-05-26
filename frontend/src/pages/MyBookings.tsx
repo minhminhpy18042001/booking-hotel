@@ -181,7 +181,7 @@ const MyBookings = () => {
                 {booking.hotel.city}, {booking.hotel.country}
               </div>
             </div>
-            <CancelBookingForm booking={booking} hotelId={booking.hotel._id} />
+            <CancelBookingForm booking={booking} hotelId={booking.hotel._id} ownerId ={booking.hotel.userId}/>
           </div>
         </div>
       ))}

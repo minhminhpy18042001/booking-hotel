@@ -17,8 +17,8 @@ export const fetchCurrentUser = async (): Promise<UserType> => {
   }
   return response.json();
 };
-export const fetchUserById =async(id:string):Promise<UserType>=>{
-  const response = await fetch(`${API_BASE_URL}/api/users/${id}`, {
+export const fetchUserById =async(userId:string):Promise<UserType>=>{
+  const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
     credentials: "include",
     });
     if (!response.ok) {
