@@ -59,6 +59,7 @@ export type Room={
   pricePerNight:number;
   specialPrices: { date: Date; price: number }[];
   imageUrls: string[];
+  amount:number;
   Bookings: BookingType[];
 }
 

@@ -24,18 +24,33 @@ type SearchContextProviderProps = {
   
 export const SearchContextProvider =({children}:SearchContextProviderProps) =>{
     const [destination,setDestination]=useState<string>(()=>localStorage.getItem("destination") ||"")
-    const [checkIn, setCheckIn] = useState<Date>(()=>new Date(localStorage.getItem("checkIn")||new Date().toISOString()));
+    // Helper: check if a date is in the past (before today)
+    const isPastDate = (date: Date) => {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        return date < today;
+    };
+
+    const [checkIn, setCheckIn] = useState<Date>(() => {
+        const stored = localStorage.getItem("checkIn");
+        const date = stored ? new Date(stored) : new Date();
+        // If date is in the past, reset to today
+        return isPastDate(date) ? new Date() : date;
+    });
     const [checkOut, setCheckOut] = useState<Date>(() => {
         const checkInStr = localStorage.getItem("checkIn");
         const checkOutStr = localStorage.getItem("checkOut");
-        if (checkOutStr) {
-            return new Date(checkOutStr);
+        let checkInDate = checkInStr ? new Date(checkInStr) : new Date();
+        let checkOutDate = checkOutStr ? new Date(checkOutStr) : null;
+        // If check-in is in the past, reset to today
+        if (isPastDate(checkInDate)) checkInDate = new Date();
+        // If check-out is missing or before check-in, set to next day
+        if (!checkOutDate || checkOutDate <= checkInDate) {
+            const nextDay = new Date(checkInDate);
+            nextDay.setDate(checkInDate.getDate() + 1);
+            return nextDay;
         }
-        // If no checkout in storage, set to next day after checkIn
-        const checkInDate = checkInStr ? new Date(checkInStr) : new Date();
-        const nextDay = new Date(checkInDate);
-        nextDay.setDate(checkInDate.getDate() + 1);
-        return nextDay;
+        return checkOutDate;
     });
     const [adultCount, setAdultCount] = useState<number>(()=>parseInt(localStorage.getItem("adultCount")||"1"));
     const [childCount, setChildCount] = useState<number>(()=>parseInt(localStorage.getItem("childCount")||"0"));

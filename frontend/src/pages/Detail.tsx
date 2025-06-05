@@ -54,6 +54,18 @@ const Detail = () => {
     };
 
     const averageRating = calculateAverageRating();
+
+    // Calculate available amount for a room in the selected date range
+    const getAvailableAmount = (room: Room) => {
+        const overlappingBookings = hotel.bookings.filter(
+            (booking) =>
+                booking.roomId === room._id &&
+                (new Date(booking.checkIn) < checkOutDateObj) &&
+                (new Date(booking.checkOut) > checkInDateObj)
+        );
+        return Math.max(0, room.amount - overlappingBookings.length);
+    };
+
     return (
         <div className="space-y-6">
             <div>
@@ -107,7 +119,11 @@ const Detail = () => {
                                     onClick={() => { handleRoomClick(room._id); setOpenModal(true) }}>
                                     {room.name}
                                 </button>
-                                {isLoggedIn ? (
+                                {getAvailableAmount(room) === 0 ? (
+                                    <button className="bg-gray-400 text-white px-3 py-1 rounded cursor-not-allowed" disabled>
+                                        Not Available
+                                    </button>
+                                ) : isLoggedIn ? (
                                     <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500"
                                         onClick={() => navigate(`/hotel/${hotelId}/booking/${room._id}`)}>
                                         Reserve
@@ -122,7 +138,8 @@ const Detail = () => {
                             <div className="flex-1">
                                 <div className="flex justify-between text-lg font-normal text-gray-700">
                                     <div>
-                                        {room.typeBed} {<FaBed className="inline mr-1" />}
+                                        {room.typeBed} {<FaBed className="inline mr-1" />}<br />
+                                        <span className="text-xs text-green-700 font-semibold">Available: {getAvailableAmount(room)}</span>
                                     </div>
                                     <div className="flex justify-between gap-2">
                                         <div className="text-gray-500">

@@ -31,6 +31,7 @@ const roomSchema =new mongoose.Schema<Room>({
   pricePerNight:{type:Number,required:true},
   specialPrices: [specialPriceSchema],
   imageUrls:[{ type: String, required: true }],
+  amount:{ type: Number, default: 1, min: 1 }, // Default to 1, minimum 1
   Bookings:[bookingSchema],
 });
 const hotelSchema =new mongoose.Schema<HotelType>({
