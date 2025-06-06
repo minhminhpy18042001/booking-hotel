@@ -13,22 +13,23 @@ const SearchResultsCard = ({ hotel }: Props) => {
       const checkOutDateObj = new Date(search.checkOut);
       const totalDays = Math.round((checkOutDateObj.getTime() - checkInDateObj.getTime()) / (1000 * 3600 * 24));
       const calculateTotalPrice = (room:Room) => {
-          
-         
-          let totalPrice = 0;
-          for (let i = 0; i < totalDays; i++) {
-            const currentDate = new Date(checkInDateObj.getTime() + i * 1000 * 3600 * 24);
-            const currentDateString = currentDate.toISOString().split("T")[0];
-            const specialDay = room.specialPrices.find((day) => new Date(day.date).toISOString().split("T")[0] === currentDateString);
-            if (specialDay) {
-              totalPrice += Math.round(room.pricePerNight*(1 + specialDay.price / 100)); // Apply the special price percentage
-            } else  {
-              totalPrice += room.pricePerNight;
-            }
+        if (!room) return 0;
+        let totalPrice = 0;
+        for (let i = 0; i < totalDays; i++) {
+          const currentDate = new Date(checkInDateObj.getTime() + i * 1000 * 3600 * 24);
+          const currentDateString = currentDate.toISOString().split("T")[0];
+          let specialDay = null;
+          if (room.specialPrices) {
+            specialDay = room.specialPrices.find((day) => day && day.date && new Date(day.date).toISOString().split("T")[0] === currentDateString);
           }
-        
-          return totalPrice;
-        };
+          if (specialDay) {
+            totalPrice += Math.round(room.pricePerNight*(1 + specialDay.price / 100));
+          } else  {
+            totalPrice += room.pricePerNight;
+          }
+        }
+        return totalPrice;
+      };
   const calculateAverageRating = () => {
         const totalScore = hotel.bookings.reduce((acc, booking) => {
             return booking.rating ? acc + booking.rating.score : acc;

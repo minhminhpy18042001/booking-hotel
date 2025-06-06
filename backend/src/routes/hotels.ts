@@ -14,10 +14,10 @@ router.get("/search", async (req: Request, res: Response) => {
         sortOptions = { starRating: -1 };
         break;
       case "pricePerNightAsc":
-        sortOptions = { pricePerNight: 1 };
+        sortOptions = { "rooms.0.pricePerNight": 1 };
         break;
       case "pricePerNightDesc":
-        sortOptions = { pricePerNight: -1 };
+        sortOptions = { "rooms.0.pricePerNight": -1 };
         break;
     }
     const pageSize = 5;
@@ -26,8 +26,35 @@ router.get("/search", async (req: Request, res: Response) => {
     );
     const skip = (pageNumber - 1) * pageSize;
 
-    const hotels = await Hotel.find(query).sort(sortOptions).skip(skip).limit(pageSize);
-    const total = await Hotel.countDocuments(query);
+    // Aggregation pipeline to filter by first room price
+    const pipeline: any[] = [
+      { $match: query },
+      {
+        $addFields: {
+          firstRoomPrice: { $arrayElemAt: ["$rooms.pricePerNight", 0] }
+        }
+      }
+    ];
+    if (req.query.maxPrice) {
+      pipeline.push({
+        $match: { firstRoomPrice: { $lte: parseInt(req.query.maxPrice as string) } }
+      });
+    }
+    if (Object.keys(sortOptions).length > 0) {
+      pipeline.push({ $sort: sortOptions });
+    }
+    pipeline.push({ $skip: skip }, { $limit: pageSize });
+
+    const hotels = await Hotel.aggregate(pipeline);
+
+    // Count pipeline for pagination
+    const countPipeline = pipeline.filter(
+      stage => !("$skip" in stage) && !("$limit" in stage)
+    );
+    countPipeline.push({ $count: "total" });
+    const countResult = await Hotel.aggregate(countPipeline);
+    const total = countResult[0]?.total || 0;
+
     const response: HotelSearchResponse = {
       data: hotels,
       pagination: {
@@ -264,12 +291,6 @@ const constructSearchQuery = (queryParams: any) => {
       : parseInt(queryParams.stars);
 
     constructedQuery.starRating = { $in: starRatings };
-  }
-
-  if (queryParams.maxPrice) {
-    constructedQuery.pricePerNight = {
-      $lte: parseInt(queryParams.maxPrice),
-    };
   }
 
   constructedQuery.statusHotel = { $ne: "pending" };
