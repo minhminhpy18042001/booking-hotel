@@ -32,6 +32,7 @@ const roomSchema =new mongoose.Schema<Room>({
   specialPrices: [specialPriceSchema],
   imageUrls:[{ type: String, required: true }],
   amount:{ type: Number, default: 1, min: 1 }, // Default to 1, minimum 1
+  policy:{ type: Number, default: 0, min: 0, max: 2 }, // Default to 1, can be 0, 1, or 2
   Bookings:[bookingSchema],
 });
 const hotelSchema =new mongoose.Schema<HotelType>({

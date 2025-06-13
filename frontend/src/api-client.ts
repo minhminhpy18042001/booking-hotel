@@ -443,7 +443,16 @@ export const saveSpecialPriceforAllRooms =async(hotelId:string,price:string,date
     return response.json();
 }
 export const createPayment =async (amount:number):Promise<string> => {
-  const response = await fetch(`${API_BASE_URL}/api/payment/create-payment-vnpay/${amount}`, {
+  const response = await fetch(`${API_BASE_URL}/api/payment/create-payment-vnpay/${amount}/false`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error create payment");
+  }
+  return response.json();
+}
+export const createPaymentBooking =async (amount:number):Promise<string> => {
+  const response = await fetch(`${API_BASE_URL}/api/payment/create-payment-vnpay/${amount}/true`, {
     credentials: "include",
   });
   if (!response.ok) {

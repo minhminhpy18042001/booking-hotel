@@ -9,30 +9,27 @@ const CheckPayment = () => {
     useEffect(() => {
         (async () => {
           try {
-            // console.log(searchParams);
-            
-              const { data } = await apiClient.checkPayment(
+              const result = await apiClient.checkPayment(
                 searchParams.toString()
               );
-              // console.log(data);
-              if (data == "00") {
-                // thành công
+              // result: { message, data, paymentFor }
+              if (result.data == "00") {
                 setStatus("success");
                 setTitle("Thanh toán thành công");
-              } else if (data.data.vnp_ResponseCode == "24") {
+                setTimeout(() => {
+                  if (result.data.paymentFor === 'room') {
+                    window.location.href = "/my-bookings";
+                  } else {
+                    window.location.href = "/my-guests";
+                  }
+                }, 3000);
+              } else if (result.data && result.data.vnp_ResponseCode == "24") {
                 setStatus("error");
                 setTitle("Khách hàng hủy thanh toán");
-              }        
+              }
           } catch (error) {}
         })();
       }, [searchParams]);
-      useEffect(() => {
-        if (status === "success") {
-          setTimeout(() => {
-            window.location.href = "/";
-          }, 3000);
-        }
-      }, [status]);
       return (
         <div className={styles.paymentStatus}>
          <h1 className={`${styles.status} ${status === 'success' ? 'success' : 'error'}`}>{status}</h1>

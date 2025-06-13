@@ -93,6 +93,23 @@ const CancelBookingForm =({booking,hotelId,ownerId}: Props)=>{
                     (<button className="w-full bg-yellow-500 text-white py-2 rounded font-bold text-lg hover:bg-yellow-400 transition">Edit Review</button>)
                     ) : (booking.statusBooking === "booked" ?
                     <button className="w-full bg-red-600 text-white py-2 rounded font-bold text-lg hover:bg-red-500 transition">Cancel</button>:null)}
+                {booking.statusBooking === "paymenting" && (
+                    <div className="mb-2 text-yellow-700 font-semibold text-center">
+                        We are holding your room for 15 minutes. Please complete your payment to secure your booking.
+                    </div>
+                )}
+                {booking.statusBooking === "paymenting" && (
+                    <button
+                        type="button"
+                        className="w-full bg-blue-600 text-white py-2 rounded font-bold text-lg hover:bg-blue-500 transition"
+                        onClick={async () =>{
+                            const paymentUrl = await apiClient.createPaymentBooking(booking.totalCost*25800*0.1);
+                            window.location.href = paymentUrl;
+                        }}
+                    >
+                        Pay Now
+                    </button>
+                )}
                 {(booking.statusBooking === "completed" || booking.statusBooking === "cancelled") && (
                     <a
                         href={`/detail/${hotelId}`}

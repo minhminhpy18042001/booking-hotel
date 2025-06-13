@@ -35,7 +35,13 @@ const Detail = () => {
         for (let i = 0; i < totalDays; i++) {
           const currentDate = new Date(checkInDateObj.getTime() + i * 1000 * 3600 * 24);
           const currentDateString = currentDate.toISOString().split("T")[0];
-          const specialDay = room.specialPrices.find((day) => new Date(day.date).toISOString().split("T")[0] === currentDateString);
+          let specialDay = null;
+          if (room.specialPrices) {
+            const specials = room.specialPrices.filter(
+              (day) => day && day.date && new Date(day.date).toISOString().split("T")[0] === currentDateString
+            );
+            specialDay = specials.length > 0 ? specials[specials.length - 1] : null;
+          }
           if (specialDay) {
             totalPrice += Math.round(room.pricePerNight*(1 + specialDay.price / 100)); // Apply the special price percentage
           } else  {
@@ -58,12 +64,34 @@ const Detail = () => {
     // Calculate available amount for a room in the selected date range
     const getAvailableAmount = (room: Room) => {
         const overlappingBookings = hotel.bookings.filter(
-            (booking) =>
-                booking.roomId === room._id &&
-                (new Date(booking.checkIn) < checkOutDateObj) &&
-                (new Date(booking.checkOut) > checkInDateObj)
+            (booking) => {
+                if (booking.roomId !== room._id) return false;
+                if (booking.statusBooking !== "booked" && booking.statusBooking !== "paymenting") return false;
+                // booking dates
+                const bookingCheckIn = new Date(booking.checkIn);
+                const bookingCheckOut = new Date(booking.checkOut);
+                // Subtract 1 day from bookingCheckOut for correct blocking
+                const bookingCheckOutMinus1 = new Date(bookingCheckOut);
+                bookingCheckOutMinus1.setDate(bookingCheckOutMinus1.getDate() - 1);
+                // Only block nights from checkIn (inclusive) to checkOut-1 (inclusive)
+                return (
+                    bookingCheckIn < checkOutDateObj &&
+                    bookingCheckOutMinus1 >= checkInDateObj
+                );
+            }
         );
         return Math.max(0, room.amount - overlappingBookings.length);
+    };
+
+    const facilityIcons: Record<string, string> = {
+        "bathroom": "🛁",
+        "Balcony": "🌅",
+        "Sea view": "🌊",
+        "Air conditioning": "❄️",
+        "Kitchen": "🍳",
+        "Outdoor Pool": "🏊",
+        "TV": "📺",
+        "WiFi": "📶"
     };
 
     return (
@@ -94,8 +122,9 @@ const Detail = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-2">
                 {hotel.facilities.map((facility) => (
-                    <div className="border border-slate-300 rounded-sm p-3">
-                        {facility}
+                    <div className="border border-slate-300 rounded-sm p-3 flex items-center gap-2">
+                        <span>{facilityIcons[facility] || "•"}</span>
+                        <span>{facility}</span>
                     </div>
                 ))}
             </div>
@@ -111,54 +140,83 @@ const Detail = () => {
             </div >
             <div className="p-4">
                 <h2 className="text-2xl font-bold mb-4">Availability</h2>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="flex flex-col gap-4">
                     {hotel.rooms.map((room) => (
                         <div className="border border-slate-300 rounded-lg shadow-md p-4 bg-white flex flex-col">
-                            <div className="flex justify-between items-center mb-2">
-                                <button className="text-xl font-bold text-blue-400 underline hover:text-red-900"
-                                    onClick={() => { handleRoomClick(room._id); setOpenModal(true) }}>
-                                    {room.name}
-                                </button>
-                                {getAvailableAmount(room) === 0 ? (
-                                    <button className="bg-gray-400 text-white px-3 py-1 rounded cursor-not-allowed" disabled>
-                                        Not Available
-                                    </button>
-                                ) : isLoggedIn ? (
-                                    <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500"
-                                        onClick={() => navigate(`/hotel/${hotelId}/booking/${room._id}`)}>
-                                        Reserve
-                                    </button>
-                                ) : (
-                                    <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500"
-                                        onClick={() => navigate("/sign-in", { state: { from: location } })}>
-                                        Login to Book
-                                    </button>
-                                )}
-                            </div>
-                            <div className="flex-1">
-                                <div className="flex justify-between text-lg font-normal text-gray-700">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                                {/* 1. Room image and information */}
+                                <div className="flex items-center gap-4">
+                                    {room.imageUrls ? (
+                                        <img src={room.imageUrls[0]} alt={room.name} className="w-24 h-24 object-cover rounded-md border" />
+                                    ) : (
+                                        <div className="w-24 h-24 bg-gray-200 flex items-center justify-center rounded-md border text-gray-400">No Image</div>
+                                    )}
                                     <div>
-                                        {room.typeBed} {<FaBed className="inline mr-1" />}<br />
-                                        <span className="text-xs text-green-700 font-semibold">Available: {getAvailableAmount(room)}</span>
+                                        <button className="text-lg font-bold text-blue-400 underline hover:text-red-900 mb-1"
+                                            onClick={() => { handleRoomClick(room._id); setOpenModal(true) }}>
+                                            {room.name}
+                                        </button>
+                                        <div className="text-sm text-gray-700">{room.typeBed} <FaBed className="inline mr-1" /></div>
                                     </div>
-                                    <div className="flex justify-between gap-2">
-                                        <div className="text-gray-500">
-                                            {calculateTotalPrice(room) < room.pricePerNight * totalDays ?
-                                                <del>{room.pricePerNight * totalDays}$</del>
-                                                :
-                                                ''}
-                                        </div>
-                                        <div className="text-red-500 font-semibold">
-                                            {Math.round((calculateTotalPrice(room) - room.pricePerNight * totalDays) / (room.pricePerNight * totalDays) * 100) < 0 ?
-                                                `${Math.round((calculateTotalPrice(room) - room.pricePerNight * totalDays) / (room.pricePerNight * totalDays) * 100)}%`
-                                                :
-                                                ''}
-                                        </div>
-                                        <div className="text-red-700 font-bold">
-                                            {calculateTotalPrice(room)}$
-                                        </div>
+                                </div>
+                                {/* 2. Room policies */}
+                                <div className="text-sm text-gray-600">
+                                    {(() => {
+                                        const policies = [];
+                                        if (room.policy === 1) {
+                                            policies.push("Pay 10% now");
+                                        } else {
+                                            policies.push("Pay at hotel");
+                                        }
+                                        policies.push("Parking");
+                                        policies.push("Free WiFi");
+                                        const icons = [
+                                            "💳", // payment
+                                            "🅿️", // parking
+                                            "📶"  // wifi
+                                        ];
+                                        return policies.map((policy, idx) => (
+                                            <span key={idx} className={`block flex items-center gap-1${idx === 0 ? ' text-green-900 font-semibold' : ''}`}>
+                                                <span>{icons[idx] || "•"}</span>{policy}
+                                            </span>
+                                        ));
+                                    })()}
+                                </div>
+                                {/* 3. Available room amount */}
+                                <div className="text-green-700 font-semibold text-center">
+                                    Available: {getAvailableAmount(room)}
+                                </div>
+                                {/* 4. Price section */}
+                                <div className="flex flex-col items-end">
+                                    <div className="flex gap-2 items-center">
+                                        {calculateTotalPrice(room) < room.pricePerNight * totalDays && (
+                                            <span className="text-gray-500 line-through">{room.pricePerNight * totalDays}$</span>
+                                        )}
+                                        {Math.round((calculateTotalPrice(room) - room.pricePerNight * totalDays) / (room.pricePerNight * totalDays) * 100) < 0 && (
+                                            <span className="text-red-500 font-semibold">
+                                                {Math.round((calculateTotalPrice(room) - room.pricePerNight * totalDays) / (room.pricePerNight * totalDays) * 100)}%
+                                            </span>
+                                        )}
+                                        <span className="text-red-700 font-bold text-lg">{calculateTotalPrice(room)}$</span>
                                     </div>
-                                </div>                              
+                                    <div className="mt-2">
+                                        {getAvailableAmount(room) === 0 ? (
+                                            <button className="bg-gray-400 text-white px-3 py-1 rounded cursor-not-allowed" disabled>
+                                                Not Available
+                                            </button>
+                                        ) : isLoggedIn ? (
+                                            <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500"
+                                                onClick={() => navigate(`/hotel/${hotelId}/booking/${room._id}`)}>
+                                                Reserve
+                                            </button>
+                                        ) : (
+                                            <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500"
+                                                onClick={() => navigate("/sign-in", { state: { from: location } })}>
+                                                Login to Reserve
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}

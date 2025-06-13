@@ -82,7 +82,7 @@ router.post(
       const newBooking: BookingType = {
         ...req.body,
         userId: req.userId,
-        statusBooking:"booked",
+        statusBooking: req.body.statusBooking || "booked",
       };
       if (newBooking.totalCost ===0)
         {

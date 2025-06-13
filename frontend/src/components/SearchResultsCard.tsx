@@ -20,7 +20,10 @@ const SearchResultsCard = ({ hotel }: Props) => {
           const currentDateString = currentDate.toISOString().split("T")[0];
           let specialDay = null;
           if (room.specialPrices) {
-            specialDay = room.specialPrices.find((day) => day && day.date && new Date(day.date).toISOString().split("T")[0] === currentDateString);
+            const specials = room.specialPrices.filter(
+              (day) => day && day.date && new Date(day.date).toISOString().split("T")[0] === currentDateString
+            );
+            specialDay = specials.length > 0 ? specials[specials.length - 1] : null;
           }
           if (specialDay) {
             totalPrice += Math.round(room.pricePerNight*(1 + specialDay.price / 100));

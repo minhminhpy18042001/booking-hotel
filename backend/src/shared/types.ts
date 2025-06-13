@@ -60,6 +60,7 @@ export type Room={
   specialPrices: { date: Date; price: number }[];
   imageUrls: string[];
   amount:number;
+  policy: number;
   Bookings: BookingType[];
 }
 

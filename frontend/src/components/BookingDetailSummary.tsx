@@ -43,6 +43,9 @@ const BookingDetailSummary =({checkIn,checkOut,adultCount,childCount,numberOfNig
                     {adultCount} adults & {childCount} children
                 </div>
             </div>
+            <div className="border-t py-2 text-red-600 font-semibold">
+                Free cancellation up to 3 days before check-in
+            </div>
         </div>
     )
 };

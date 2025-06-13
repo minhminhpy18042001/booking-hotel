@@ -27,9 +27,15 @@ const Booking =()=>{
         for (let i = 0; i < totalDays; i++) {
           const currentDate = new Date(checkInDateObj.getTime() + i * 1000 * 3600 * 24);
           const currentDateString = currentDate.toISOString().split("T")[0];
-          const specialDay = room.specialPrices.find((day) => new Date(day.date).toISOString().split("T")[0] === currentDateString);
+          let specialDay = null;
+          if (room.specialPrices) {
+            const specials = room.specialPrices.filter(
+              (day) => day && day.date && new Date(day.date).toISOString().split("T")[0] === currentDateString
+            );
+            specialDay = specials.length > 0 ? specials[specials.length - 1] : null;
+          }
           if (specialDay) {
-            totalPrice += specialDay.price;
+            totalPrice += Math.round(room.pricePerNight*(1 + specialDay.price / 100));
           } else  {
             totalPrice += room.pricePerNight;
           }
@@ -53,7 +59,7 @@ const Booking =()=>{
             hotel={hotel}
             room ={room}
             />}
-            {currentUser && room && <BookingForm currentUser ={currentUser} totalCost ={calculateTotalPrice(room)} />}
+            {currentUser && room && <BookingForm currentUser ={currentUser} totalCost ={calculateTotalPrice(room)} policy={room.policy} />}
             
         </div>
     );

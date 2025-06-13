@@ -82,7 +82,7 @@ import { useState } from "react";
 // };
 const MyBookings = () => {
   const { data: hotels } = useQuery("fetchMyBookings", apiClient.fetchMyBookings);
-  const [selectedStatus, setSelectedStatus] = useState("booked");
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const [sortOption, setSortOption] = useState("checkInDesc");
   const [searchId, setSearchId] = useState("");
 
@@ -174,7 +174,7 @@ const MyBookings = () => {
               className="w-full h-full object-cover object-center"
             />
           </div>
-          <div className="flex flex-col gap-4 overflow-y-auto max-h-[300px]">
+          <div className="flex flex-col gap-4 overflow-y-auto max-h-[500px]">
             <div className="text-2xl font-bold">
               {booking.hotel.name}
               <div className="text-xs font-normal">
