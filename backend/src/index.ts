@@ -69,6 +69,15 @@ cron.schedule('0 * * * *', async () => {
         console.error('Error updating booking statuses:', error);
     }
 });
+cron.schedule('*/15 * * * *', async () => {
+  //const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+  await Hotel.updateMany(
+    { "bookings.statusBooking": "paymenting" },
+    { $set: { "bookings.$[elem].statusBooking": "cancelled" } },
+    { arrayFilters: [{ "elem.statusBooking": "paymenting" }] }
+  );
+  console.log('Expired paymenting bookings cancelled.');
+});
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended :true}));

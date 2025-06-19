@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as apiClient from "../../api-client";
 import styles from '../../css/AddCredit.module.css';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 const AddCredit = () => {
   //const [amount, setAmount] = useState<number>(10000);
   const location = useLocation();

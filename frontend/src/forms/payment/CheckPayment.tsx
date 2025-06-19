@@ -17,10 +17,11 @@ const CheckPayment = () => {
                 setStatus("success");
                 setTitle("Thanh toán thành công");
                 setTimeout(() => {
+                  console.log(result)
                   if (result.data.paymentFor === 'room') {
                     window.location.href = "/my-bookings";
                   } else {
-                    window.location.href = "/my-guests";
+                    window.location.href = "/";
                   }
                 }, 3000);
               } else if (result.data && result.data.vnp_ResponseCode == "24") {

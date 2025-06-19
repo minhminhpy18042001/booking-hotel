@@ -110,6 +110,32 @@ const AddRoomDetails =()=>{
                     </span>
                 )}
             </div>
+            <label className="text-gray-700 text-sm font-bold max-w-[50%]">
+                Amount (Number of Rooms)
+                <input
+                    type="number"
+                    min={1}
+                    className="border rounded w-full py-1 px-2 font-normal"
+                    {...register("amount", { required: "This field is required", min: { value: 1, message: "At least 1 room required" } })}
+                />
+                {errors.amount && (
+                    <span className="text-red-500">{errors.amount.message}</span>
+                )}
+            </label>
+            <label className="text-gray-700 text-sm font-bold max-w-[50%]">
+                Policy
+                <select
+                    className="border rounded w-full py-1 px-2 font-normal"
+                    {...register("policy", { required: "This field is required" })}
+                >
+                    <option value="">Select policy</option>
+                    <option value={0}>Pay at hotel</option>
+                    <option value={1}>Pay 10% now</option>
+                </select>
+                {errors.policy && (
+                    <span className="text-red-500">{errors.policy.message}</span>
+                )}
+            </label>
  
         </div>
     );

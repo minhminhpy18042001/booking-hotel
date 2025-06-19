@@ -15,6 +15,8 @@ export type RoomFormData = {
     imageFiles: FileList;
     imageUrls:string[];
     hotelId:string;
+    amount: number;
+    policy: number;
 };
 type Props = {
     room?:Room;
@@ -46,6 +48,8 @@ const AddRoomForm = ({ onSave,isLoading,room}: Props) => {
         formData.append("description", formDataJson.description);
         formData.append("typeBed", formDataJson.typeBed);
         formData.append('hotelId',hotelId||"");
+        formData.append("amount", formDataJson.amount.toString());
+        formData.append("policy", formDataJson.policy.toString());
         if (formDataJson.imageUrls) {
             formDataJson.imageUrls.forEach((url, index) => {
               formData.append(`imageUrls[${index}]`, url);

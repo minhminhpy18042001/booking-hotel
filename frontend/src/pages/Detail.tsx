@@ -80,6 +80,10 @@ const Detail = () => {
                 );
             }
         );
+        console.log("Room name:", room.name);
+        console.log("Check-in date:", checkInDateObj);
+        console.log("Check-out date:", checkOutDateObj);
+        console.log("Overlapping bookings:", overlappingBookings);
         return Math.max(0, room.amount - overlappingBookings.length);
     };
 
@@ -91,7 +95,30 @@ const Detail = () => {
         "Kitchen": "🍳",
         "Outdoor Pool": "🏊",
         "TV": "📺",
-        "WiFi": "📶"
+        "WiFi": "📶",
+        "Parking": "🅿️",
+        "Restaurant": "🍽️",
+        "Bar": "🍸",
+        "Spa": "💆",
+        "Fitness center": "🏋️",
+        "Pet friendly": "🐾",
+        "24-hour front desk": "🕛",
+        "Room service": "🛎️",
+        "Laundry": "🧺",
+        "Airport shuttle": "🚌",
+        "Non-smoking rooms": "🚭",
+        "Family rooms": "👨‍👩‍👧‍👦",
+        "Breakfast included": "🥐",
+        "Elevator": "🛗",
+        "Garden": "🌳",
+        "Terrace": "🌻",
+        "Business center": "💼",
+        "Conference room": "🏢",
+        "Sauna": "🔥",
+        "Hot tub": "🛀",
+        "Playground": "🛝",
+        "Bicycle rental": "🚲",
+        "Car rental": "🚗",
     };
 
     return (
