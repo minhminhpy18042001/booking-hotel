@@ -195,15 +195,18 @@ const Detail = () => {
                                         } else {
                                             policies.push("Pay at hotel");
                                         }
+                                        policies.push("Free cancellation before 3 days");
                                         policies.push("Parking");
                                         policies.push("Free WiFi");
+  
                                         const icons = [
                                             "💳", // payment
+                                            "✅",  
                                             "🅿️", // parking
                                             "📶"  // wifi
-                                        ];
+                                       ];
                                         return policies.map((policy, idx) => (
-                                            <span key={idx} className={`block flex items-center gap-1${idx === 0 ? ' text-green-900 font-semibold' : ''}`}>
+                                            <span key={idx} className={`block flex items-center gap-1${idx === 0||idx ===1 ? ' text-green-900 font-semibold' : ''}`}>
                                                 <span>{icons[idx] || "•"}</span>{policy}
                                             </span>
                                         ));

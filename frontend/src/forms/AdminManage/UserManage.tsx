@@ -30,6 +30,8 @@ const UserManage =() => {
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Email</th>
+                        <th>Phone</th>
+                        <th>Credit</th>
                         <th>Role</th>
 
                     </tr>
@@ -43,6 +45,8 @@ const UserManage =() => {
                             <td>{user.firstName}</td>
                             <td>{user.lastName}</td>
                             <td>{user.email}</td>
+                            <td>{user.phone}</td>
+                            <td style={{ color: user.credit < 0 ? 'red' : undefined }}>{user.credit}</td>
                             <td>
                                 <select
                                     value={user.role}

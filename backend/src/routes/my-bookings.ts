@@ -152,6 +152,25 @@ router.put("/:bookingId",verifyToken as any,async (req: Request, res: Response):
               console.log("Cancellation email sent: " + info.response);
             }
         });
+        // Refund 10% credit if paymentMethod is 1
+        if (booking.paymentMethod === 1) {
+            const User = require('../models/user').default;
+            const Payment = require('../models/payment').default;
+            const refundAmount = Math.round(booking.totalCost * 0.1 * 25800); // Assuming totalCost is in USD and we convert to VND
+            await User.findOneAndUpdate(
+                { _id: req.userId },
+                { $inc: { credit: refundAmount } }
+            );
+            // Create a payment record for the refund
+            await Payment.create({
+                amount: refundAmount,
+                userId: req.userId,
+                paymentMethod: 'credit',
+                paymentStatus: 'completed',
+                paymentDate: new Date(),
+                paymentFor: 'refund',
+            });
+        }
         res.status(201).json(hotel);
     } catch (error) {
         res.status(500).json({ message: "Something went wrong" });

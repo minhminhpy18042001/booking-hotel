@@ -7,7 +7,7 @@ const paymentSchema = new mongoose.Schema<PaymentType>({
   paymentMethod: { type: String,enum:['vnpay','credit'] ,default:'vnpay'},
   paymentStatus: { type: String, enum: ['pending', 'completed', 'failed'], default: 'pending' },
   paymentDate: { type: Date, default: Date.now },
-  paymentFor: { type: String, enum: ['hotel', 'room'], default: 'hotel' },
+  paymentFor: { type: String, enum: ['hotel', 'room','refund','withdraw'], default: 'hotel' },
 });
 const Payment = mongoose.model<PaymentType>("Payment", paymentSchema);
 export default Payment;

@@ -25,6 +25,7 @@ import RevenuePage from "./pages/RevenuePage";
 import AddCredit from "./forms/payment/AddCredit";
 import CheckPayment from "./forms/payment/CheckPayment";
 import Profile from "./pages/Profile";
+import Credit from "./pages/Credit";
 
 
 
@@ -66,6 +67,11 @@ const App =()=>{
         <Route path ="/profile" element={
           <Layout>
             <Profile/> 
+          </Layout>
+        }/>
+        <Route path ="/credit" element={
+          <Layout>
+            <Credit/> 
           </Layout>
         }/>
         <Route path="/revenue" element={

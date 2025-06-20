@@ -50,6 +50,7 @@ const Header =()=>{
                                     <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">View Profile</Link>
                                     <Link to="/my-bookings" className="block px-4 py-2 hover:bg-gray-100">My Bookings</Link>
                                     <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100">Settings</Link>
+                                    <Link to="/credit" className="block px-4 py-2 hover:bg-gray-100">Credits</Link>
                                     <div className="border-t my-1"></div>
                                     <SignOutButton />
                                 </div>

@@ -12,6 +12,7 @@ const bookingSchema = new mongoose.Schema<BookingType>({
   roomId:{type:String,required:true},
   totalCost: { type: Number, required: true },
   statusBooking:{type: String,required:true},
+  paymentMethod:{type:Number,default:0}, // 0 for cash, 1 for 10%, 
   rating: {
     score: { type: Number, min: 1, max: 10 }, // Example of a score field
     review: { type: String }, // Optional review field

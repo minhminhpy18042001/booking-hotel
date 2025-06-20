@@ -3,9 +3,9 @@ import * as apiClient from "../../api-client";
 import styles from "./../../css/HotelManage.module.css"
 import { useState } from "react";
 
-const CommissionFee =() => {
+const Payment =() => {
 
-    const {data:payments}=useQuery("fetchPayments",()=>apiClient.fetchPayments());
+    const {data:payments}=useQuery("fetchPayments",()=>apiClient.fetchAllPayment());
     const [searchId, setSearchId] = useState("");
     if(!payments){
         return <div>No Payment found...</div>;
@@ -58,4 +58,4 @@ const CommissionFee =() => {
         </div>
     );
 };
-export default CommissionFee;
+export default Payment;

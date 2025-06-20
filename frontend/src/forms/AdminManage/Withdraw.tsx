@@ -1,12 +1,22 @@
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import * as apiClient from "../../api-client";
 import styles from "./../../css/HotelManage.module.css"
 import { useState } from "react";
+import { useAppContext } from "../../contexts/AppContext";
+const Withdraw =() => {
 
-const CommissionFee =() => {
-
-    const {data:payments}=useQuery("fetchPayments",()=>apiClient.fetchPayments());
+    const { showToast } = useAppContext();
+    const {data:payments}=useQuery("fetchAllWithdraws",()=>apiClient.fetchAllWithdraws());
     const [searchId, setSearchId] = useState("");
+    const updateStatusMutation = useMutation(apiClient.updateWithdrawStatus, {
+        onSuccess: () => {
+            showToast({ message: "Status update completed", type: "SUCCESS" });
+            window.location.reload();
+        },
+        onError: (error: any) => {
+            showToast({ message: error.message, type: "ERROR" });
+        },
+    });
     if(!payments){
         return <div>No Payment found...</div>;
     }
@@ -49,7 +59,17 @@ const CommissionFee =() => {
                                 })} </td>
                                 <td style={{ color: payment.paymentMethod === 'vnpay' ? 'green' : 'red' }}>{payment.paymentMethod}</td>
                                 <td style={{ color: payment.paymentMethod === 'vnpay' ? 'green' : 'red' }}>{payment.paymentMethod === 'credit' ? '-' : ''}{payment.amount}</td>
-                                <td>{payment.paymentStatus}</td>
+                                <td>{payment.paymentStatus}
+                                    {payment.paymentStatus === "pending" && (
+                                        <button
+                                            className="ml-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-500"
+                                            onClick={() => updateStatusMutation.mutate(payment._id)}
+                                            disabled={updateStatusMutation.isLoading}
+                                        >
+                                            {updateStatusMutation.isLoading ? "Updating..." : "Mark as Completed"}
+                                        </button>
+                                    )}
+                                </td>
                                 <td>{payment.paymentFor || '-'}</td>
                             </tr>
                     ))}
@@ -58,4 +78,4 @@ const CommissionFee =() => {
         </div>
     );
 };
-export default CommissionFee;
+export default Withdraw;

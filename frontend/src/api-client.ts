@@ -479,6 +479,39 @@ export const fetchPayments=async():Promise<PaymentType[]>=>{
   }
   return response.json();
 }
+export const fetchAllPayment =async():Promise<PaymentType[]>=>{
+  const response = await fetch(`${API_BASE_URL}/api/payment/all`,{
+    credentials:"include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching Payment");
+  }
+  return response.json();
+}
+export const withdraw =async(amount:number)=>{
+  const response = await fetch(`${API_BASE_URL}/api/payment/withdraw`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ amount }),
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.message);
+  }
+  return body;
+}
+export const fetchAllWithdraws =async():Promise<PaymentType[]>=>{
+  const response = await fetch(`${API_BASE_URL}/api/payment/allWithdraws`,{
+    credentials:"include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching Withdraws");
+  }
+  return response.json();
+}
 export const changePassword =async (currentPassword:string,newPassword:string)=>{
   const response = await fetch(`${API_BASE_URL}/api/users/change-password`, {
     method: "PUT",
@@ -521,3 +554,18 @@ export const uploadAvatar = async (formData:FormData) => {
   }
   return body;
 }
+export const updateWithdrawStatus = async (paymentId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/payment/update-status`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ paymentId }),
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.message);
+  }
+  return body;
+};

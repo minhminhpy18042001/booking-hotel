@@ -63,6 +63,16 @@ const CancelBookingForm =({booking,hotelId,ownerId}: Props)=>{
                     <span className="text-lg font-semibold text-blue-700">{booking.totalCost}$</span>
                 </div>
                 <div className="text-xs text-gray-500">Booking ID: <span className="font-mono">{booking._id}</span></div>
+                { (
+                    <div className="text-sm mt-2">
+                        {booking.paymentMethod === 1 && (
+                            <span className="text-yellow-700 font-semibold">Payment 10% already, 90% at hotel (refundable 10% if cancelled)</span>
+                        )}
+                        {booking.paymentMethod !==1  && (
+                            <span className="text-green-700 font-semibold">Payment: Pay full amount at hotel</span>
+                        )}
+                    </div>
+                )}
             </div>
             {/* Owner info toggle */}
             {owner && (
@@ -89,8 +99,8 @@ const CancelBookingForm =({booking,hotelId,ownerId}: Props)=>{
             <div className="mt-4 flex flex-col gap-2 w-full max-w-[350px]">
                 {booking.statusBooking === "completed" ?
                     (!booking.rating ?
-                    (<button className="w-full bg-green-600 text-white py-2 rounded font-bold text-lg hover:bg-green-500 transition">Review</button>):
-                    (<button className="w-full bg-yellow-500 text-white py-2 rounded font-bold text-lg hover:bg-yellow-400 transition">Edit Review</button>)
+                    (<button className="w-full bg-green-600 text-white py-2 rounded font-bold text-lg hover:bg-green-500 transition">Review</button>)
+                    : null
                     ) : (booking.statusBooking === "booked" ?
                     <button className="w-full bg-red-600 text-white py-2 rounded font-bold text-lg hover:bg-red-500 transition">Cancel</button>:null)}
                 {booking.statusBooking === "paymenting" && (

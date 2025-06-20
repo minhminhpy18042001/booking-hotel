@@ -16,14 +16,14 @@ const CheckPayment = () => {
               if (result.data == "00") {
                 setStatus("success");
                 setTitle("Thanh toán thành công");
-                setTimeout(() => {
-                  console.log(result)
-                  if (result.data.paymentFor === 'room') {
-                    window.location.href = "/my-bookings";
-                  } else {
-                    window.location.href = "/";
-                  }
-                }, 3000);
+                // setTimeout(() => {
+                //   console.log(result)
+                //   if (result.data.data.paymentFor === 'room') {
+                //     window.location.href = "/my-bookings";
+                //   } else {
+                //     window.location.href = "/";
+                //   }
+                // }, 3000);
               } else if (result.data && result.data.vnp_ResponseCode == "24") {
                 setStatus("error");
                 setTitle("Khách hàng hủy thanh toán");

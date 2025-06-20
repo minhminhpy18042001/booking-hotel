@@ -43,6 +43,7 @@ export type BookingType = {
   checkOut: Date;
   totalCost: number;
   statusBooking:string;
+  paymentMethod: number; // Payment method field, optional
   rating: {
     score: number,
     review: string,

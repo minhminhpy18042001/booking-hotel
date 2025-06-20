@@ -9,13 +9,63 @@ import {VNPay,ignoreLogger,ProductCode,VnpLocale,dateFormat} from "vnpay";
 import User from "../models/user";
 router.get("/",verifyToken as any,async (req:Request,res:Response)=>{
     try {
-        const payments = await Payment.find({userId:req.userId}).sort({createdAt:-1});
+        const payments = await Payment.find({userId:req.userId}).sort({paymentDate:-1});
         res.status(200).json(payments);
     } catch (error) {
         console.log(error);
         res.status(500).json({message:"Something went wrong"});
     }
 });
+router.get("/allWithdraws",verifyToken as any,async (req:Request,res:Response)=>{
+    try {
+        const payments = await Payment.find({paymentFor:'withdraw'}).sort({paymentDate:-1});
+        res.status(200).json(payments);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Something went wrong"});
+    }
+});
+
+router.get("/all",verifyToken as any,async (req:Request,res:Response)=>{
+    try {
+        const payments = await Payment.find({}).sort({paymentDate:-1});
+        res.status(200).json(payments);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Something went wrong"});
+    }
+}
+);
+router.post("/withdraw",verifyToken as any,async (req:Request,res:Response): Promise<any> =>{
+    const {amount} = req.body;
+    if(!amount || amount <= 0){
+        return res.status(400).json({message:"Invalid amount"});
+    }
+    try {
+        const user = await User.findById(req.userId);
+        if(!user){
+            return res.status(404).json({message:"User not found"});
+        }
+        if(user.credit < amount){
+            return res.status(400).json({message:"Insufficient credit"});
+        }
+        const payment = new Payment({
+            amount,
+            userId:req.userId,
+            paymentMethod:'credit',
+            paymentStatus:'pending',
+            paymentFor:'withdraw',
+        });
+        await payment.save();
+        user.credit -= amount;
+        await user.save();
+        res.status(200).json(payment);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Something went wrong"});
+    }
+}
+);
 router.get("/create-payment-vnpay/:amount/:forBooking",verifyToken as any,async (req:Request,res:Response)=>{
     const amount=Number(req.params.amount);
     const forBooking = req.params.forBooking === 'true';
@@ -78,7 +128,11 @@ router.get("/check-payment-vnpay", verifyToken as any, async (req: Request, res:
           'bookings.statusBooking': 'paymenting',
         },
         {
-          $set: { 'bookings.$[elem].statusBooking': 'booked' }
+          $set: 
+          { 
+            'bookings.$[elem].statusBooking': 'booked',
+            'bookings.$[elem].paymentMethod': 1 // Set payment method to 1 for 10% payment
+          }
         },
         {
           arrayFilters: [ { 'elem.userId': req.userId, 'elem.statusBooking': 'paymenting' } ],
@@ -113,5 +167,26 @@ router.get("/check-payment-vnpay", verifyToken as any, async (req: Request, res:
     );
     return res.status(400).json({ message: "Payment failed", data: vnp_ResponseCode, paymentFor: payment.paymentFor });
   }
+});
+// Update payment status to completed
+router.put("/update-status", verifyToken as any, async (req: Request, res: Response):Promise<any> => {
+    const { paymentId } = req.body;
+    if (!paymentId) {
+        return res.status(400).json({ message: "Payment ID is required" });
+    }
+    try {
+        const payment = await Payment.findById(paymentId);
+        if (!payment) {
+            return res.status(404).json({ message: "Payment not found" });
+        }
+        if (payment.paymentStatus === "completed") {
+            return res.status(400).json({ message: "Payment already completed" });
+        }
+        payment.paymentStatus = "completed";
+        await payment.save();
+        res.status(200).json({ message: "Payment status updated to completed" });
+    } catch (error) {
+        res.status(500).json({ message: "Something went wrong" });
+    }
 });
 export default router;

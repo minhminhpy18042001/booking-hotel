@@ -6,6 +6,8 @@ import UserManage from "../forms/AdminManage/UserManage";
 import BookingManage from "../forms/AdminManage/BookingManage";
 import HotelPendingManage from "../forms/AdminManage/HotelPendingManage";
 import RevenueManage from "../forms/AdminManage/RevenueManage";
+import Payment from "../forms/AdminManage/Payment";
+import Withdraw from "../forms/AdminManage/Withdraw";
 const Admin =()=>{
     const { isLoggedIn, isAdmin } = useAppContext();
     const [selectedEntity, setSelectedEntity] = useState("Revenue"); // Default selection
@@ -64,6 +66,14 @@ const Admin =()=>{
                 style={{ cursor: "pointer", padding: "12px", borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: selectedEntity === "Booking" ? "#e0e0e0" : "transparent" }}>
                 Booking
             </li>
+            <li onClick={() => setSelectedEntity("Payment")} 
+                style={{ cursor: "pointer", padding: "12px", borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: selectedEntity === "Payment" ? "#e0e0e0" : "transparent" }}>
+                Payment
+            </li>
+            <li onClick={() => setSelectedEntity("Withdraw")}
+                style={{ cursor: "pointer", padding: "12px", borderRadius: "4px", transition: "background-color 0.3s", backgroundColor: selectedEntity === "Withdraw" ? "#e0e0e0" : "transparent" }}>
+                Withdraw
+            </li>
 
         </ul>
     </div>
@@ -81,6 +91,8 @@ const Admin =()=>{
         {selectedEntity==="User"&&<UserManage></UserManage>}
         {selectedEntity==="Booking"&&<BookingManage></BookingManage>}
         {selectedEntity==="Revenue"&&<RevenueManage></RevenueManage>}
+        {selectedEntity==="Payment"&&<Payment></Payment>}
+        {selectedEntity==="Withdraw"&&<Withdraw></Withdraw>}
         {/* You can add more admin functionalities or display data based on selectedEntity */}
 
     </div>
